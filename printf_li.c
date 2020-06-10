@@ -31,6 +31,7 @@ static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p);
 int             ft_printf(const char *fmt, ...);
 struct fields{
     char specifier;
+    int something;
 };
 
 /*
@@ -141,13 +142,16 @@ int             ft_printf(const char *fmt, ...)
     int *printed;
     int count;
     va_list ap;
-    //struct fields *strformat;
-    struct fields strformat;
+    struct fields *strformat;
+    //struct fields strformat;
 
     if(!fmt)
         return(-1);
     count = 0;
     printed = &count;
+    strformat = (struct fields*)malloc(sizeof(struct fields));
+    strformat->specifier = '\0';
+    strformat->something = 0;
     va_start(ap, fmt);
     while (*fmt)
     {
@@ -166,12 +170,12 @@ int             ft_printf(const char *fmt, ...)
             }
             else
             {
-                strformat.specifier = *fmt;
+                strformat->specifier = *fmt;
                 //printf("%c\n", strformat.specifier);
                 
                 //ft_strformat_init(strformat);
                 //ft_fieldstorage(fmt,strformat,printed);
-                ft_specifier_redirect(&ap, strformat.specifier, printed);
+                ft_specifier_redirect(&ap, strformat->specifier, printed);
                        
             //ft_putstr((char *)va_arg(ap, char *), printed);
                 fmt++;

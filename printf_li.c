@@ -179,6 +179,7 @@ static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f)
     {
         f->point = 1;
         f->width = 0;
+        fmt++;
         (*fmt_inc)++;
     }
     else
@@ -188,6 +189,7 @@ static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f)
         if(*fmt == '.')
         {   
             f->point = 1;
+            fmt++;
             (*fmt_inc)++;
         }
     }
@@ -212,16 +214,19 @@ static int     ft_fieldstorage(const char *fmt,int *fmt_inc, struct fields *f)
     int width_inc;
     flag_inc = 0;
     width_inc = 0;
+    *fmt_inc = 0;
     //fmt n foi incrementada ainda
-    if(ft_fillflags(fmt,fmt_inc,f) == -1)
+    if(ft_fillflags(fmt,fmt_inc,f) == -1) //-------------chama 1 funcao
         return(-1);
     flag_inc = *fmt_inc;
     fmt = fmt + flag_inc;//fmt + flaginc
-    ft_fillwidth(fmt,fmt_inc,f);
-    width_inc = *fmt_inc - flag_inc;
+    *fmt_inc = 0;
+    ft_fillwidth(fmt,fmt_inc,f);         //---------------chama 2 funcao   
+    width_inc = *fmt_inc;
     fmt = fmt + width_inc;//fmt + flaginc + widthinc
+    *fmt_inc = 0;
 
-    
+    *fmt_inc = flag_inc + width_inc;
     return (0);
     
 }
@@ -276,13 +281,13 @@ int             ft_printf(const char *fmt, ...)
             else
             {
                 ft_strformat_init(strformat);
-                fmt_inc = 0;
                 if(ft_fieldstorage(fmt,&fmt_inc,strformat) == -1)
                 {
                     free(strformat);
                     return (-1);
                 }
                 fmt = fmt + fmt_inc;//???????
+                fmt_inc = 0;
                 strformat->specifier = *fmt;
                 ft_specifier_redirect(&ap, strformat->specifier, printed);
                 fmt++;
@@ -291,11 +296,11 @@ int             ft_printf(const char *fmt, ...)
     }
     va_end(ap);
     printf("\n\n----------------------\n");
-    printf("\n->Last specifier: %c\n", strformat->specifier);
-    printf("\n->Last flag minus: %d\n", strformat->flagminus);
-    printf("\n->Last flag zero: %d\n",strformat->flagzero);
-    printf("\n->Last width: %d\n\n\n",strformat->width);
-    printf("\n->Last point: %d\n\n\n",strformat->point);
+    printf("\n->Last specifier:---->%c\n", strformat->specifier);
+    printf("\n->Last flag minus:--->%d\n", strformat->flagminus);
+    printf("\n->Last flag zero:---->%d\n",strformat->flagzero);
+    printf("\n->Last width:-------->%d\n",strformat->width);
+    printf("\n->Last point:-------->%d\n\n",strformat->point);
 
     free(strformat);
     return (*printed);
@@ -312,13 +317,13 @@ int            main()
     int i = 42;
 
     printf("Dev_Version\n");
-    qtt = ft_printf("Ola%s que tal? %s %c, de coder! Sobrenome %d!!!\n", ", Matheus", "Curtiu?", c, i);
+    qtt = ft_printf("Str:%s Char:%c Int d:%d Int i:%i\n", "String",c,9066,i);
     printf("%d caracteres impressos\n", qtt);
     printf("Original_Version\n");
-    qtt = printf("Ola%s que tal? %s %c, de coder! Sobrenome %d!!!\n", ", Matheus", "Curtiu?", c, i);
+    qtt = printf("Str:%s Char:%c Int d:%d Int i:%i\n", "String",c,9066,i);
     printf("%d caracteres impressos\n", qtt);
 
-    ft_printf("======== %--------345.d", 345);
+    ft_printf("======== %00042.c", 145);
 
     return (0);
 }

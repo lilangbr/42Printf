@@ -21,11 +21,12 @@
  * ****************************************
  */
 struct fields{
-    char    specifier;
-    int     flagminus;
     int     flagzero;
-    int     point;
+    int     flagminus;
     int     width;
+    int     point;
+    int     precision;
+    char    specifier;
 };
 static void     ft_putchar(char c, int *p);
 static void     ft_putstr(char *s, int *p);
@@ -38,6 +39,8 @@ static void     ft_strformat_init(struct fields *f);
 static int      ft_fieldstorage(const char *fmt,int *fmt_inc, struct fields *f);
 static int      ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f);
 static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f);
+static int      ft_fillprecision(const char *fmt, int *fmt_inc, struct fields *f);
+static int      ft_fillspecifier(const char *fmt, int *fmt_inc, struct fields *f);
 static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p);
 int             ft_printf(const char *fmt, ...);
 
@@ -120,11 +123,12 @@ static void     ft_char_print(va_list *p_ap, int *p)
 }
 static void     ft_strformat_init(struct fields *f)
 {
-    f->specifier = '\0';
     f->flagminus = 0;
     f->flagzero = 0;
-    f->point = 0;
     f->width = 0;
+    f->point = 0;
+    f->precision = 0;
+    f->specifier = '\0';
 
 }
 static int     ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f)
@@ -189,18 +193,35 @@ static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f)
         if(*fmt == '.')
         {   
             f->point = 1;
-            fmt++;
+            fmt++; //lsakjdlkasjdlkjsaldkjsladjlskajdlksjldkjslkdj>>>>>????
             (*fmt_inc)++;
         }
     }
 }
-//static void ft_fillprecision
-//    if(*fmt == '.')
-//    {
-//        f->point = 1;
-//        f->width = 0;
-//        (*fmt_inc)++;
-//    }
+static int      ft_fillprecision(const char *fmt, int *fmt_inc, struct fields *f)
+{
+    if(*fmt == '-')
+        return (-1);
+    else if (f->point)
+    {
+        f->precision = ft_getnumber(fmt,fmt_inc);
+        return (0);
+    }
+    else
+        return (0);
+}
+static int      ft_fillspecifier(const char *fmt, int *fmt_inc, struct fields *f)
+{
+    if( *fmt != 's' && *fmt != 'c' && *fmt != 'i' && *fmt != 'd')
+        return (-1);
+    else
+    {
+        f->specifier = *fmt;
+        (*fmt_inc)++;
+        return (0);
+    }
+}
+
 
 
 static int     ft_fieldstorage(const char *fmt,int *fmt_inc, struct fields *f)
@@ -212,8 +233,13 @@ static int     ft_fieldstorage(const char *fmt,int *fmt_inc, struct fields *f)
      */
     int flag_inc;
     int width_inc;
+    int precis_inc;
+    int specif_inc;
+
     flag_inc = 0;
     width_inc = 0;
+    precis_inc = 0;
+    specif_inc = 0;
     *fmt_inc = 0;
     //fmt n foi incrementada ainda
     if(ft_fillflags(fmt,fmt_inc,f) == -1) //-------------chama 1 funcao
@@ -224,9 +250,18 @@ static int     ft_fieldstorage(const char *fmt,int *fmt_inc, struct fields *f)
     ft_fillwidth(fmt,fmt_inc,f);         //---------------chama 2 funcao   
     width_inc = *fmt_inc;
     fmt = fmt + width_inc;//fmt + flaginc + widthinc
+    if (f->point)
+    {
+        *fmt_inc = 0;
+        if(ft_fillprecision(fmt, fmt_inc, f) == -1) //----- + 1
+            return (-1);
+        precis_inc = *fmt_inc;
+        fmt = fmt + precis_inc;
+    }
     *fmt_inc = 0;
-
-    *fmt_inc = flag_inc + width_inc;
+    ft_fillspecifier(fmt, fmt_inc, f);   //------------- + 1
+    specif_inc = *fmt_inc;
+    *fmt_inc = flag_inc + width_inc + precis_inc + specif_inc;
     return (0);
     
 }
@@ -287,8 +322,7 @@ int             ft_printf(const char *fmt, ...)
                     return (-1);
                 }
                 fmt = fmt + fmt_inc;//???????
-                fmt_inc = 0;
-                strformat->specifier = *fmt;
+                //strformat->specifier = *fmt;
                 ft_specifier_redirect(&ap, strformat->specifier, printed);
                 fmt++;
             }
@@ -296,11 +330,12 @@ int             ft_printf(const char *fmt, ...)
     }
     va_end(ap);
     printf("\n\n----------------------\n");
-    printf("\n->Last specifier:---->%c\n", strformat->specifier);
     printf("\n->Last flag minus:--->%d\n", strformat->flagminus);
     printf("\n->Last flag zero:---->%d\n",strformat->flagzero);
     printf("\n->Last width:-------->%d\n",strformat->width);
     printf("\n->Last point:-------->%d\n\n",strformat->point);
+    printf("\n->Last precision:---->%d\n", strformat->precision);
+    printf("\n->Last specifier:---->%c\n", strformat->specifier);
 
     free(strformat);
     return (*printed);
@@ -316,14 +351,18 @@ int            main()
     char c = 'C';
     int i = 42;
 
-    printf("Dev_Version\n");
-    qtt = ft_printf("Str:%s Char:%c Int d:%d Int i:%i\n", "String",c,9066,i);
-    printf("%d caracteres impressos\n", qtt);
     printf("Original_Version\n");
     qtt = printf("Str:%s Char:%c Int d:%d Int i:%i\n", "String",c,9066,i);
     printf("%d caracteres impressos\n", qtt);
 
-    ft_printf("======== %00042.c", 145);
+    printf("Dev_Version\n");
+    qtt = ft_printf("Str:%s Char:%c Int d:%d Int i:%i\n", "String",c,9066,i);
+    printf("%d caracteres impressos\n", qtt);
+
+    //qtt = ft_printf("\n*\n=======> %-00042.c\n", 145);
+    //printf("\n%d caracteres impressos\n", qtt);
+    //
+    printf("\n\n\n|%000023.d|\n\n", 42);
 
     return (0);
 }

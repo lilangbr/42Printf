@@ -20,6 +20,13 @@
  * to insert in libftprintf.h
  * ****************************************
  */
+struct fields{
+    char    specifier;
+    int     flagminus;
+    int     flagzero;
+    int     point;
+    int     width;
+};
 static void     ft_putchar(char c, int *p);
 static void     ft_putstr(char *s, int *p);
 static void		cut(int number, int *p);
@@ -27,26 +34,18 @@ static void     ft_putnbr(int n, int *p);
 static void     ft_int_print(va_list *p_ap, int *p);
 static void     ft_str_print(va_list *p_ap, int *p);
 static void     ft_char_print(va_list *p_ap, int *p);
+static void     ft_strformat_init(struct fields *f);
+static int      ft_fieldstorage(const char *fmt,int *fmt_inc, struct fields *f);
+static int      ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f);
+static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f);
 static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p);
 int             ft_printf(const char *fmt, ...);
-struct fields{
-    char specifier;
-    int something;
-};
 
 /*
  * ***************************************
  * aux functions
  * ****************************************
  */
-//static void     ft_strformat_init(strformat)
-//{
-//    strformat = (struct fields *)malloc(1*sizeof(char));
-//    strformat->specifier = 0;
-//}
-                //ft_fieldstorage(fmt,strformat,printed);
-/*
-*/
 
 static void     ft_putchar(char c, int *p)
 {
@@ -119,6 +118,114 @@ static void     ft_char_print(va_list *p_ap, int *p)
         c = (char)va_arg(*p_ap, int);
         ft_putchar(c, p);
 }
+static void     ft_strformat_init(struct fields *f)
+{
+    f->specifier = '\0';
+    f->flagminus = 0;
+    f->flagzero = 0;
+    f->point = 0;
+    f->width = 0;
+
+}
+static int     ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f)
+{
+    int count_minus;
+    int count_zero;
+    count_minus = 0;
+    count_zero = 0;
+    while(*fmt == '-' || *fmt == '0')
+    {
+        if(*fmt == '-' && count_minus == 0)
+        {
+            f->flagminus = 1;
+            count_minus++;
+        }
+        if(*fmt == '0' && count_zero == 0)
+        {
+            f->flagzero = 1;
+            count_zero++;
+        }
+        if(count_minus && count_zero)
+            return(-1);
+        fmt++;
+        (*fmt_inc)++;
+    }
+    return (0);
+
+}
+static int      ft_getnumber(const char *fmt, int *fmt_inc)
+{
+    int number;
+
+    number = 0;
+    if(*fmt < 58 && *fmt > 47)
+    {
+        number = *fmt - 48;
+        fmt++;
+        (*fmt_inc)++;
+        while(*fmt < 58 && *fmt > 47)
+        {
+            number = number*10 + (*fmt - 48);
+            fmt++;
+            (*fmt_inc)++;
+        }
+    }
+            
+    return (number);
+}
+static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f)
+{
+    if(*fmt == '.')
+    {
+        f->point = 1;
+        f->width = 0;
+        (*fmt_inc)++;
+    }
+    else
+    {
+        f->width = ft_getnumber(fmt,fmt_inc);
+        fmt = fmt + *fmt_inc;
+        if(*fmt == '.')
+        {   
+            f->point = 1;
+            (*fmt_inc)++;
+        }
+    }
+}
+//static void ft_fillprecision
+//    if(*fmt == '.')
+//    {
+//        f->point = 1;
+//        f->width = 0;
+//        (*fmt_inc)++;
+//    }
+
+
+static int     ft_fieldstorage(const char *fmt,int *fmt_inc, struct fields *f)
+{
+    /*
+     * Eh preciso corrigit fmt na ft_printf 
+     * pq aqui caminha-se nela
+     *
+     */
+    int flag_inc;
+    int width_inc;
+    flag_inc = 0;
+    width_inc = 0;
+    //fmt n foi incrementada ainda
+    if(ft_fillflags(fmt,fmt_inc,f) == -1)
+        return(-1);
+    flag_inc = *fmt_inc;
+    fmt = fmt + flag_inc;//fmt + flaginc
+    ft_fillwidth(fmt,fmt_inc,f);
+    width_inc = *fmt_inc - flag_inc;
+    fmt = fmt + width_inc;//fmt + flaginc + widthinc
+
+    
+    return (0);
+    
+}
+
 /* CHOICE C S P D I U X */
 static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p)
 {
@@ -141,17 +248,15 @@ int             ft_printf(const char *fmt, ...)
 {
     int *printed;
     int count;
+    int fmt_inc;
     va_list ap;
     struct fields *strformat;
-    //struct fields strformat;
-
+    
     if(!fmt)
         return(-1);
     count = 0;
     printed = &count;
     strformat = (struct fields*)malloc(sizeof(struct fields));
-    strformat->specifier = '\0';
-    strformat->something = 0;
     va_start(ap, fmt);
     while (*fmt)
     {
@@ -170,19 +275,29 @@ int             ft_printf(const char *fmt, ...)
             }
             else
             {
+                ft_strformat_init(strformat);
+                fmt_inc = 0;
+                if(ft_fieldstorage(fmt,&fmt_inc,strformat) == -1)
+                {
+                    free(strformat);
+                    return (-1);
+                }
+                fmt = fmt + fmt_inc;//???????
                 strformat->specifier = *fmt;
-                //printf("%c\n", strformat.specifier);
-                
-                //ft_strformat_init(strformat);
-                //ft_fieldstorage(fmt,strformat,printed);
                 ft_specifier_redirect(&ap, strformat->specifier, printed);
-                       
-            //ft_putstr((char *)va_arg(ap, char *), printed);
                 fmt++;
             }
         }
     }
     va_end(ap);
+    printf("\n\n----------------------\n");
+    printf("\n->Last specifier: %c\n", strformat->specifier);
+    printf("\n->Last flag minus: %d\n", strformat->flagminus);
+    printf("\n->Last flag zero: %d\n",strformat->flagzero);
+    printf("\n->Last width: %d\n\n\n",strformat->width);
+    printf("\n->Last point: %d\n\n\n",strformat->point);
+
+    free(strformat);
     return (*printed);
 }
 /*
@@ -203,8 +318,7 @@ int            main()
     qtt = printf("Ola%s que tal? %s %c, de coder! Sobrenome %d!!!\n", ", Matheus", "Curtiu?", c, i);
     printf("%d caracteres impressos\n", qtt);
 
-
-
+    ft_printf("======== %--------345.d", 345);
 
     return (0);
 }

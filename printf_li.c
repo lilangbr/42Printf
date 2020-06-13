@@ -193,7 +193,7 @@ static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f)
         if(*fmt == '.')
         {   
             f->point = 1;
-            fmt++; //lsakjdlkasjdlkjsaldkjsladjlskajdlksjldkjslkdj>>>>>????
+            //fmt++; //lsakjdlkasjdlkjsaldkjsladjlskajdlksjldkjslkdj>>>>>????
             (*fmt_inc)++;
         }
     }
@@ -321,10 +321,8 @@ int             ft_printf(const char *fmt, ...)
                     free(strformat);
                     return (-1);
                 }
-                fmt = fmt + fmt_inc;//???????
-                //strformat->specifier = *fmt;
                 ft_specifier_redirect(&ap, strformat->specifier, printed);
-                fmt++;
+                fmt = fmt + fmt_inc;
             }
         }
     }
@@ -333,9 +331,10 @@ int             ft_printf(const char *fmt, ...)
     printf("\n->Last flag minus:--->%d\n", strformat->flagminus);
     printf("\n->Last flag zero:---->%d\n",strformat->flagzero);
     printf("\n->Last width:-------->%d\n",strformat->width);
-    printf("\n->Last point:-------->%d\n\n",strformat->point);
+    printf("\n->Last point:-------->%d\n",strformat->point);
     printf("\n->Last precision:---->%d\n", strformat->precision);
     printf("\n->Last specifier:---->%c\n", strformat->specifier);
+    printf("\n\n----------------------\n");
 
     free(strformat);
     return (*printed);
@@ -351,13 +350,15 @@ int            main()
     char c = 'C';
     int i = 42;
 
-    printf("Original_Version\n");
+    printf("\n\nOriginal_Version\n");
     qtt = printf("Str:%s Char:%c Int d:%d Int i:%i\n", "String",c,9066,i);
     printf("%d caracteres impressos\n", qtt);
-
-    printf("Dev_Version\n");
+    printf("\n\n----------------------\n");
+    printf("\n\nDev_Version\n");
     qtt = ft_printf("Str:%s Char:%c Int d:%d Int i:%i\n", "String",c,9066,i);
     printf("%d caracteres impressos\n", qtt);
+    printf("\n\n----------------------\n");
+
 
     //qtt = ft_printf("\n*\n=======> %-00042.c\n", 145);
     //printf("\n%d caracteres impressos\n", qtt);

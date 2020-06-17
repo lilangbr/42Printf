@@ -36,10 +36,10 @@ static void     ft_int_print(va_list *p_ap, int *p);
 static void     ft_str_print(va_list *p_ap, int *p);
 static void     ft_char_print(va_list *p_ap, int *p);
 static void     ft_strformat_init(struct fields *f);
-static int      ft_fieldstorage(const char *fmt,int *fmt_inc, struct fields *f);
+static int      ft_fieldstorage(va_list *p_ap, const char *fmt,int *fmt_inc, struct fields *f);
 static int      ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f);
-static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f);
-static int      ft_fillprecision(const char *fmt, int *fmt_inc, struct fields *f);
+static void     ft_fillwidth(va_list *p_ap, const char *fmt,int *fmt_inc,struct fields *f);
+static int      ft_fillprecision(va_list *p_ap, const char *fmt, int *fmt_inc, struct fields *f);
 static int      ft_fillspecifier(const char *fmt, int *fmt_inc, struct fields *f);
 static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p);
 int             ft_printf(const char *fmt, ...);
@@ -177,7 +177,7 @@ static int      ft_getnumber(const char *fmt, int *fmt_inc)
             
     return (number);
 }
-static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f)
+static void     ft_fillwidth(va_list *p_ap, const char *fmt,int *fmt_inc,struct fields *f)
 {
     if(*fmt == '.')
     {
@@ -188,23 +188,38 @@ static void     ft_fillwidth(const char *fmt,int *fmt_inc,struct fields *f)
     }
     else
     {
-        f->width = ft_getnumber(fmt,fmt_inc);
-        fmt = fmt + *fmt_inc;
+        if (*fmt == '*')
+        {
+            f->width = va_arg(*p_ap, int);
+            fmt++;
+            (*fmt_inc)++;
+        }
+        else
+        {
+            f->width = ft_getnumber(fmt,fmt_inc);
+            fmt = fmt + *fmt_inc;
+        }
         if(*fmt == '.')
         {   
             f->point = 1;
-            //fmt++; //lsakjdlkasjdlkjsaldkjsladjlskajdlksjldkjslkdj>>>>>????
             (*fmt_inc)++;
         }
+        
     }
 }
-static int      ft_fillprecision(const char *fmt, int *fmt_inc, struct fields *f)
+static int      ft_fillprecision(va_list *p_ap, const char *fmt, int *fmt_inc, struct fields *f)
 {
     if(*fmt == '-')
         return (-1);
     else if (f->point)
     {
-        f->precision = ft_getnumber(fmt,fmt_inc);
+        if(*fmt == '*')
+        {
+            f->precision = va_arg(*p_ap, int);
+            (*fmt_inc)++;
+        }
+        else
+            f->precision = ft_getnumber(fmt,fmt_inc);
         return (0);
     }
     else
@@ -224,44 +239,36 @@ static int      ft_fillspecifier(const char *fmt, int *fmt_inc, struct fields *f
 
 
 
-static int     ft_fieldstorage(const char *fmt,int *fmt_inc, struct fields *f)
+static int     ft_fieldstorage(va_list *p_ap,const char *fmt,int *fmt_inc, struct fields *f)
 {
     /*
      * Eh preciso corrigit fmt na ft_printf 
      * pq aqui caminha-se nela
      *
      */
-    int flag_inc;
-    int width_inc;
-    int precis_inc;
-    int specif_inc;
-
-    flag_inc = 0;
-    width_inc = 0;
-    precis_inc = 0;
-    specif_inc = 0;
-    *fmt_inc = 0;
-    //fmt n foi incrementada ainda
+    int fmt_acc;
+    *fmt_inc = 0; //fmt n foi incrementada ainda
     if(ft_fillflags(fmt,fmt_inc,f) == -1) //-------------chama 1 funcao
         return(-1);
-    flag_inc = *fmt_inc;
-    fmt = fmt + flag_inc;//fmt + flaginc
+    fmt += *fmt_inc; //corrige referencia
+    fmt_acc = *fmt_inc;//acumula p devolver p printf
     *fmt_inc = 0;
-    ft_fillwidth(fmt,fmt_inc,f);         //---------------chama 2 funcao   
-    width_inc = *fmt_inc;
-    fmt = fmt + width_inc;//fmt + flaginc + widthinc
+    ft_fillwidth(p_ap,fmt,fmt_inc,f);         //---------------chama 2 funcao   
+    fmt += *fmt_inc; //corrige referencia
+    fmt_acc += *fmt_inc;//acumula p devolver p printf
     if (f->point)
     {
         *fmt_inc = 0;
-        if(ft_fillprecision(fmt, fmt_inc, f) == -1) //----- + 1
+        if(ft_fillprecision(p_ap, fmt, fmt_inc, f) == -1) //----- + 1 funcao
             return (-1);
-        precis_inc = *fmt_inc;
-        fmt = fmt + precis_inc;
+        fmt += *fmt_inc; //corrige referencia
+        fmt_acc += *fmt_inc;//acumula p devolver p printf
     }
     *fmt_inc = 0;
-    ft_fillspecifier(fmt, fmt_inc, f);   //------------- + 1
-    specif_inc = *fmt_inc;
-    *fmt_inc = flag_inc + width_inc + precis_inc + specif_inc;
+    ft_fillspecifier(fmt, fmt_inc, f);   //------------- + 1 funcao
+    fmt += *fmt_inc; //corrige referencia
+    fmt_acc += *fmt_inc;//acumula p devolver p printf
+    *fmt_inc = fmt_acc; 
     return (0);
     
 }
@@ -286,23 +293,21 @@ static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p)
  */
 int             ft_printf(const char *fmt, ...)
 {
-    int *printed;
-    int count;
+    int printed;
     int fmt_inc;
     va_list ap;
     struct fields *strformat;
     
     if(!fmt)
         return(-1);
-    count = 0;
-    printed = &count;
+    printed = 0;
     strformat = (struct fields*)malloc(sizeof(struct fields));
     va_start(ap, fmt);
     while (*fmt)
     {
         if(*fmt != '%')
         {
-            ft_putchar(*fmt, printed);
+            ft_putchar(*fmt, &printed);
             fmt++;
         }
         else
@@ -310,18 +315,18 @@ int             ft_printf(const char *fmt, ...)
             fmt++;
             if(*fmt == '%')
             {
-                ft_putchar(*fmt, printed);
+                ft_putchar(*fmt, &printed);
                 fmt++;
             }
             else
             {
                 ft_strformat_init(strformat);
-                if(ft_fieldstorage(fmt,&fmt_inc,strformat) == -1)
+                if(ft_fieldstorage(&ap, fmt,&fmt_inc,strformat) == -1)
                 {
                     free(strformat);
                     return (-1);
                 }
-                ft_specifier_redirect(&ap, strformat->specifier, printed);
+                ft_specifier_redirect(&ap, strformat->specifier, &printed);
                 fmt = fmt + fmt_inc;
             }
         }
@@ -337,7 +342,7 @@ int             ft_printf(const char *fmt, ...)
     printf("\n\n----------------------\n");
 
     free(strformat);
-    return (*printed);
+    return (printed);
 }
 /*
  * ***************************************
@@ -351,11 +356,11 @@ int            main()
     int i = 42;
 
     printf("\n\nOriginal_Version\n");
-    qtt = printf("Str:%s Char:%c Int d:%d Int i:%i\n", "String",c,9066,i);
+    qtt = printf("Str:%s Char:%c Int d:%d Int i:%*.7i\n", "String",c,9066,14,i);
     printf("%d caracteres impressos\n", qtt);
     printf("\n\n----------------------\n");
     printf("\n\nDev_Version\n");
-    qtt = ft_printf("Str:%s Char:%c Int d:%d Int i:%i\n", "String",c,9066,i);
+    qtt = ft_printf("Str:%s Char:%c Int d:%d Int i:%*.7i\n", "String",c,9066,14,i);
     printf("%d caracteres impressos\n", qtt);
     printf("\n\n----------------------\n");
 

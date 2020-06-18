@@ -32,7 +32,9 @@ static void     ft_putchar(char c, int *p);
 static void     ft_putstr(char *s, int *p);
 static void		cut(int number, int *p);
 static void     ft_putnbr(int n, int *p);
-static void     ft_int_print(va_list *p_ap, int *p);
+static int      ft_len_int(int a); //COMPLETAR O CABECALHO
+static void     ft_printspacezero(int type, int qtt, int *p); //COMPLETAR CABECALHO
+static void     ft_printint(va_list *p_ap, int *p, struct fields *f);
 static void     ft_str_print(va_list *p_ap, int *p);
 static void     ft_char_print(va_list *p_ap, int *p);
 static void     ft_strformat_init(struct fields *f);
@@ -41,7 +43,7 @@ static int      ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f);
 static void     ft_fillwidth(va_list *p_ap, const char *fmt,int *fmt_inc,struct fields *f);
 static int      ft_fillprecision(va_list *p_ap, const char *fmt, int *fmt_inc, struct fields *f);
 static int      ft_fillspecifier(const char *fmt, int *fmt_inc, struct fields *f);
-static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p);
+static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p, struct fields *f);
 int             ft_printf(const char *fmt, ...);
 
 /*
@@ -100,13 +102,111 @@ static void     ft_putnbr(int n, int *p)
 	else
 		ft_putchar('0', p);
 }
+static int      ft_len_int(int a) //COMPLETAR O CABECALHO
+{
+    int length;
+    
+    length = 1;
+    while (a > 9)
+    {
+        a = a/10;
+        length++;
+    }
+    return (length);
+}
+static void     ft_printspacezero(int type, int qtt, int *p) //COMPLETAR CABECALHO
+{
+    char c;
+
+    if(type == 0)
+        c = '0';
+    else
+        c = ' ';
+    while(qtt > 0)
+    {
+        ft_putchar(c, p);
+        qtt--;
+    }
+}
 /* INT */
-static void     ft_int_print(va_list *p_ap, int *p)
+static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
 { 
         int d;
-        d = va_arg(*p_ap, int);
-        ft_putnbr(d, p);
+        int d_len;
+        int neg;
+        int space;
+        int zero;
+        
+        neg = 0;
+        if((d = va_arg(*p_ap, int)) < 0)
+        {
+            neg = 1;
+            d = -d;
+        }
+
+        d_len = ft_len_int(d);
+        if (f->point)
+        {
+            zero = f->precision - d_len;
+            if (zero > 0)
+                space = f->width - f->precision;
+            else
+                space = f->width - d_len;
+            if(neg)
+                space--;
+            if(!(f->flagminus))
+            {
+                ft_printspacezero( 1, space, p);
+                if (neg)
+                    ft_putchar('-', p);
+                if(zero > 0)
+                    ft_printspacezero( 0, zero, p);
+                ft_putnbr(d, p);
+            }
+            else
+            {
+                if (neg)
+                    ft_putchar('-', p);
+                if(zero > 0)
+                    ft_printspacezero( 0, zero, p);
+                ft_putnbr(d, p);
+                ft_printspacezero( 1, space, p);
+            }
+        }
+        else
+        {
+            if(neg)
+                d_len++;
+            space = f->width - d_len;
+            zero = space;
+            if(f->flagzero)
+            {
+                if(neg)
+                    ft_putchar('-', p);
+                ft_printspacezero(0, zero, p);
+                ft_putnbr(d, p);
+            }
+            else
+            {
+                if(f->flagminus)
+                {
+                    if(neg)
+                        ft_putchar('-', p);
+                    ft_putnbr(d, p);
+                    ft_printspacezero(1, space, p);
+                }
+                else
+                {
+                    ft_printspacezero(1, space, p);
+                    if(neg)
+                        ft_putchar('-', p);
+                    ft_putnbr(d, p);
+                }
+            }
+        }
 }
+
+
 /* STRING */
 static void     ft_str_print(va_list *p_ap, int *p)
 { 
@@ -274,10 +374,10 @@ static int     ft_fieldstorage(va_list *p_ap,const char *fmt,int *fmt_inc, struc
 }
 
 /* CHOICE C S P D I U X */
-static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p)
+static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p, struct fields *f)
 {
     if(sp == 'd' || sp == 'i')
-        ft_int_print(p_ap,p); 
+        ft_printint(p_ap,p,f); 
     else if(sp == 'c')
         ft_char_print(p_ap,p); 
     else if(sp == 's')
@@ -326,20 +426,23 @@ int             ft_printf(const char *fmt, ...)
                     free(strformat);
                     return (-1);
                 }
-                ft_specifier_redirect(&ap, strformat->specifier, &printed);
+                ft_specifier_redirect(&ap, strformat->specifier, &printed, strformat);
                 fmt = fmt + fmt_inc;
+
+                /* TO DEBUG FLAG STORAGE
+                 *
+                printf("\nminus( %d ) ", strformat->flagminus);
+                printf("zero( %d ) ",strformat->flagzero);
+                printf("width( %d ) ",strformat->width);
+                printf("point( %d ) ",strformat->point);
+                printf("precision( %d ) ", strformat->precision);
+                printf("specifier( %c )\n\n", strformat->specifier);
+                *
+                */
             }
         }
     }
     va_end(ap);
-    printf("\n\n----------------------\n");
-    printf("\n->Last flag minus:--->%d\n", strformat->flagminus);
-    printf("\n->Last flag zero:---->%d\n",strformat->flagzero);
-    printf("\n->Last width:-------->%d\n",strformat->width);
-    printf("\n->Last point:-------->%d\n",strformat->point);
-    printf("\n->Last precision:---->%d\n", strformat->precision);
-    printf("\n->Last specifier:---->%c\n", strformat->specifier);
-    printf("\n\n----------------------\n");
 
     free(strformat);
     return (printed);
@@ -353,22 +456,22 @@ int            main()
 {
     int qtt;
     char c = 'C';
-    int i = 42;
+    int i = -0;
 
     printf("\n\nOriginal_Version\n");
-    qtt = printf("Str:%s Char:%c Int d:%d Int i:%*.7i\n", "String",c,9066,14,i);
+    qtt = printf("|Str:%s| |Char:%c| |Int d:%d| |Int i:%-10i|\n", "String",c,9066,i);
     printf("%d caracteres impressos\n", qtt);
-    printf("\n\n----------------------\n");
-    printf("\n\nDev_Version\n");
-    qtt = ft_printf("Str:%s Char:%c Int d:%d Int i:%*.7i\n", "String",c,9066,14,i);
+    printf("\n----------------------\n");
+    printf("\nDev_Version\n");
+    qtt = ft_printf("|Str:%s| |Char:%c| |Int d:%d| |Int i:%-10i|\n", "String",c,9066,i);
     printf("%d caracteres impressos\n", qtt);
-    printf("\n\n----------------------\n");
+    printf("\n----------------------\n");
 
 
     //qtt = ft_printf("\n*\n=======> %-00042.c\n", 145);
     //printf("\n%d caracteres impressos\n", qtt);
     //
-    printf("\n\n\n|%000023.d|\n\n", 42);
+    //printf("\n\n\n|%000023.d|\n\n", 42);
 
     return (0);
 }

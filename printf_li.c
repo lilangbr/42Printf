@@ -30,9 +30,9 @@ struct fields{
 };
 static void     ft_putchar(char c, int *p);
 static void     ft_putstr(char *s, int *p);
-static void		cut(int number, int *p);
+static void		cut(unsigned int number, int *p);
 static void     ft_putnbr(int n, int *p);
-static int      ft_len_int(int a); //COMPLETAR O CABECALHO
+static int      len_int(int a); //COMPLETAR O CABECALHO
 static void     ft_printspacezero(int type, int qtt, int *p); //COMPLETAR CABECALHO
 static void     ft_printint(va_list *p_ap, int *p, struct fields *f);
 static void     ft_str_print(va_list *p_ap, int *p);
@@ -63,7 +63,7 @@ static void     ft_putstr(char *s, int *p)
         while (*s)
             ft_putchar(*s++, p);
 }
-static void		cut(int number, int *p)
+static void		cut(unsigned int number, int *p)
 {
 	int		div;
 	int		mod;
@@ -79,34 +79,45 @@ static void		cut(int number, int *p)
 
 static void     ft_putnbr(int n, int *p)
 {
-	if (n != 0)
+	unsigned int u;
+
+    if (n != 0)
 	{
 		if (n < 0)
 		{
-			ft_putchar('-', p);
-			if (n == -2147483648)
-			{
-				n = (-1) * (n / 10);
-				cut(n, p);
-				ft_putchar('8', p);
-			}
-			else
-			{
-				n = -n;
-				cut(n, p);
-			}
+			//ft_putchar('-', p);
+            u = -n;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			//if (n == -2147483648)
+			//{
+			//	n = (-1) * (n / 10);
+			//	cut(n, p);
+			//	ft_putchar('8', p);
+			//}
+			//else
+			//{
+			//	n = -n;
+			//  cut(n, p);
+			//}
+            cut(u, p);//!!!!!!!!!!!!!!!!!!!!!!!!!!
 		}
 		else
-			cut(n, p);
+        {
+            u = n; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			//cut(n, p);
+            cut(u, p);
+        }
+
 	}
 	else
 		ft_putchar('0', p);
 }
-static int      ft_len_int(int a) //COMPLETAR O CABECALHO
+static int      len_int(int a) //COMPLETAR O CABECALHO
 {
     int length;
     
     length = 1;
+    if (a < 0)
+        a = -a;
     while (a > 9)
     {
         a = a/10;
@@ -139,13 +150,13 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
         
         neg = 0;
         if((d = va_arg(*p_ap, int)) < 0)
-        {
-            neg = 1;
-            d = -d;
+        {//ja capturou, segundo a logica do complemento a 2. Eh o q de fato sera apresentado OK
+            neg = 1;//ou seja -2147483648 < d < 0
+            //d = -d; //AQUI VA DAR MERDA
         }
 
-        d_len = ft_len_int(d);
-        if (f->point)
+        d_len = len_int(d);
+        if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
         {
             zero = f->precision - d_len;
             if (zero > 0)
@@ -154,13 +165,17 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
                 space = f->width - d_len;
             if(neg)
                 space--;
-            if(!(f->flagminus))
+          //  printf("Space: %d\n", space);
+          //  printf("Zero: %d\n", zero);
+          //  printf("d_len: %d\n", d_len);
+            if(!(f->flagminus))//alinhado a direita
             {
                 ft_printspacezero( 1, space, p);
                 if (neg)
                     ft_putchar('-', p);
                 if(zero > 0)
                     ft_printspacezero( 0, zero, p);
+        //        printf("*"); //930942038402938409328409823049830498320948
                 ft_putnbr(d, p);
             }
             else
@@ -429,8 +444,8 @@ int             ft_printf(const char *fmt, ...)
                 ft_specifier_redirect(&ap, strformat->specifier, &printed, strformat);
                 fmt = fmt + fmt_inc;
 
-                /* TO DEBUG FLAG STORAGE
-                 *
+               /* TO DEBUG FLAG STORAGE
+                *
                 printf("\nminus( %d ) ", strformat->flagminus);
                 printf("zero( %d ) ",strformat->flagzero);
                 printf("width( %d ) ",strformat->width);
@@ -456,20 +471,26 @@ int            main()
 {
     int qtt;
     char c = 'C';
-    int i = -0;
+    //int i = -2147483649;
 
+    /*
     printf("\n\nOriginal_Version\n");
-    qtt = printf("|Str:%s| |Char:%c| |Int d:%d| |Int i:%-10i|\n", "String",c,9066,i);
+    qtt = printf("|Str:%s| |Char:%c| |Int d:%d| |Int i:%020.15i|\n", "String",c,9066,-21479);
     printf("%d caracteres impressos\n", qtt);
     printf("\n----------------------\n");
     printf("\nDev_Version\n");
-    qtt = ft_printf("|Str:%s| |Char:%c| |Int d:%d| |Int i:%-10i|\n", "String",c,9066,i);
+    qtt = ft_printf("|Str:%s| |Char:%c| |Int d:%d| |Int i:%020.15i|\n", "String",c,9066,-21479);
     printf("%d caracteres impressos\n", qtt);
     printf("\n----------------------\n");
 
+    */
+    //printf("-0xffffffffe: %x 0x1 %x\n", -0xfffffffe, 0x1);
 
-    //qtt = ft_printf("\n*\n=======> %-00042.c\n", 145);
-    //printf("\n%d caracteres impressos\n", qtt);
+
+    qtt = printf("|%042.4i|\n", 0x145);
+    printf("\n%d caracteres impressos\n", qtt);
+    qtt = ft_printf("|%042.4i|\n", 0x145);
+    printf("\n%d caracteres impressos\n", qtt);
     //
     //printf("\n\n\n|%000023.d|\n\n", 42);
 

@@ -31,14 +31,15 @@ struct fields{
 static void     ft_putchar(char c, int *p);
 static void     ft_putstr(char *s, int *p);
 static void		cut(unsigned int number, int *p);
-static void		cuthex(unsigned int number, int capitalized, int *p);
+static void		cuthex(size_t number, int capitalized, int *p);
 static void     ft_putnbr(int n, int *p);
-static void     ft_putnbr_hex(unsigned int h, int capitalized, int *p);
-static int      len_int(int a); //COMPLETAR O CABECALHO
-static int      len_hex(unsigned int h); //COMPLETAR O CABECALHO
-static void     ft_printspacezero(int type, int qtt, int *p); //COMPLETAR CABECALHO
+static void     ft_putnbr_hex(size_t h, int capitalized, int *p);
+static int      len_int(int a); 
+static int      len_hex(unsigned int h); 
+static void     ft_printspacezero(int type, int qtt, int *p); 
 static void     ft_printint(va_list *p_ap, int *p, struct fields *f);
 static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f);
+static void     ft_printpointer(va_list *p_ap, int *p, struct fields *f);
 static void     ft_str_print(va_list *p_ap, int *p);
 static void     ft_char_print(va_list *p_ap, int *p);
 static void     ft_strformat_init(struct fields *f);
@@ -80,10 +81,10 @@ static void		cut(unsigned int number, int *p)
 	c = '0' + mod;
 	ft_putchar(c, p);
 }
-static void		cuthex(unsigned int number, int capitalized, int *p)
+static void		cuthex(size_t number, int capitalized, int *p)
 {
-	int		div;
-	int		mod;
+	size_t		div;
+	size_t		mod;
 	char	c;
 
 	div = number / 16;
@@ -101,7 +102,7 @@ static void		cuthex(unsigned int number, int capitalized, int *p)
     }
 	ft_putchar(c, p);
 }
-static void     ft_putnbr_hex(unsigned int h, int capitalized, int *p)
+static void     ft_putnbr_hex(size_t h, int capitalized, int *p)
 {
     if (h != 0)
             cuthex(h,capitalized, p);
@@ -130,7 +131,7 @@ static void     ft_putnbr(int n, int *p)
 	else
 		ft_putchar('0', p);
 }
-static int      len_hex(unsigned int h) //COMPLETAR O CABECALHO
+static int      len_hex(unsigned int h) 
 {
     int length;
     
@@ -156,7 +157,7 @@ static int      len_int(int a)
     }
     return (length);
 }
-static void     ft_printspacezero(int type, int qtt, int *p) //COMPLETAR CABECALHO
+static void     ft_printspacezero(int type, int qtt, int *p) 
 {
     char c;
 
@@ -170,21 +171,49 @@ static void     ft_printspacezero(int type, int qtt, int *p) //COMPLETAR CABECAL
         qtt--;
     }
 }
-/* HEX */
-static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f) //CABECALHOOO
-{ 
-        unsigned int h;
-        int h_len;
-        int space;
-        int zero;
+/* POINTER */
+static void     ft_printpointer(va_list *p_ap, int *p, struct fields *f) 
+{
+    //Nao faz sentido precisao nem flag zero!
+    //fazer fillspecifier rejeitar. Ela já é uma static int: Usar ela!
+    int add_len;
+    size_t add;
+    int space;
         
-        h = va_arg(*p_ap, unsigned int);
-        h_len = len_hex(h);
-        if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
-        {
-            zero = f->precision - h_len;
-            if (zero > 0)
-                space = f->width - f->precision;
+    add = (size_t)va_arg(*p_ap, void *);//cplusplus.com/cstdio/printf/
+
+    
+    add_len = 12 + 2;//'0x'
+    space = f->width - add_len;
+    if(f->flagminus)
+    {
+        ft_putstr("0x",p);
+        ft_putnbr_hex(add, 0, p);
+        ft_printspacezero(1, space, p);
+    }
+    else
+    {
+        ft_printspacezero(1, space, p);
+        ft_putstr("0x",p);
+        ft_putnbr_hex(add, 0, p);
+    }
+}
+
+/* HEX */
+static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f)
+{
+    unsigned int h;
+    int h_len;
+    int space;
+    int zero;
+        
+    h = va_arg(*p_ap, unsigned int);
+    h_len = len_hex(h);
+    if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
+    {
+        zero = f->precision - h_len;
+        if (zero > 0)
+            space = f->width - f->precision;
             else
                 space = f->width - h_len;
             if(!(f->flagminus))//alinhado a direita
@@ -238,10 +267,8 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
         
         neg = 0;
         if((d = va_arg(*p_ap, int)) < 0)
-        {//ja capturou, segundo a logica do complemento a 2. Eh o q de fato sera apresentado OK
-            neg = 1;//ou seja -2147483648 < d < 0
-            //d = -d; //AQUI VA DAR MERDA
-        }
+            neg = 1;
+//ja capturou, segundo a logica do complemento a 2. Eh o q de fato sera apresentado OK
 
         d_len = len_int(d);
         if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
@@ -253,9 +280,6 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
                 space = f->width - d_len;
             if(neg)
                 space--;
-          //  printf("Space: %d\n", space);
-          //  printf("Zero: %d\n", zero);
-          //  printf("d_len: %d\n", d_len);
             if(!(f->flagminus))//alinhado a direita
             {
                 ft_printspacezero( 1, space, p);
@@ -263,7 +287,6 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
                     ft_putchar('-', p);
                 if(zero > 0)
                     ft_printspacezero( 0, zero, p);
-        //        printf("*"); //930942038402938409328409823049830498320948
                 ft_putnbr(d, p);
             }
             else
@@ -430,11 +453,17 @@ static int      ft_fillprecision(va_list *p_ap, const char *fmt, int *fmt_inc, s
 }
 static int      ft_fillspecifier(const char *fmt, int *fmt_inc, struct fields *f)
 {
-    if( *fmt != 's' && *fmt != 'c' && *fmt != 'i' && *fmt != 'd' && *fmt != 'x' && *fmt != 'X')
+    if( *fmt != 's' && *fmt != 'c' && *fmt != 'i' && *fmt != 'd' && *fmt != 'x' && *fmt != 'X' && *fmt != 'p')
         return (-1);
     else
     {
         f->specifier = *fmt;
+        //
+        //(if specifier = p e existe flah 0 ou precisao: return -1, etc)
+        //
+        //AQUI VAI CONTROLE DE FLAGS ----erros de input
+        //
+        //
         (*fmt_inc)++;
         return (0);
     }
@@ -479,16 +508,18 @@ static int     ft_fieldstorage(va_list *p_ap,const char *fmt,int *fmt_inc, struc
 /* CHOICE C S P D I U X */
 static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p, struct fields *f)
 {
-    if(sp == 'd' || sp == 'i')
+    if(sp == 'd' || sp == 'i') //OK
         ft_printint(p_ap,p,f); 
-    else if(sp == 'c')
+    else if(sp == 'c') //-------------------IMPLEMENTAR
         ft_char_print(p_ap,p); 
-    else if(sp == 's')
+    else if(sp == 's') //-------------------IMPLEMENTAR
         ft_str_print(p_ap,p); 
-    else if(sp == 'x')
+    else if(sp == 'x') //OK
         ft_printhex(p_ap, 0, p, f);
-    else if(sp == 'X')
+    else if(sp == 'X') //OK
         ft_printhex(p_ap, 1, p, f);
+    else if(sp == 'p') //OK
+        ft_printpointer(p_ap, p, f);
     /*
     */
 }
@@ -563,11 +594,23 @@ int            main()
 {
     int qtt;
     char c = 'C';
+    char d = 'd';
+    char *p;
+    char *q;
 
-    qtt = printf("|%-42.20X|\n", 0xff54);
-    printf("\n%d caracteres impressos\n", qtt);
-    qtt = ft_printf("|%-42.20X|\n", 0xff54);
-    printf("\n%d caracteres impressos\n", qtt);
+    p = &c;
+    q = &d;
+
+    printf("\n\n\n");
+    qtt = printf("|%-42p|\n", q);
+    printf("%d caracteres impressos\n\n", qtt);
+    qtt = ft_printf("|%-42p|\n", q);
+    printf("%d caracteres impressos\n\n", qtt);
+
+    printf("\n\n\n");
+    printf("size_t            = %lu\n", sizeof(size_t));
+    printf("unsigned long int = %lu\n", sizeof(unsigned long int));
+    printf("unsigned int      = %lu\n", sizeof(unsigned int));
 
 
     return (0);

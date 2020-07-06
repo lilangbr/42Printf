@@ -33,11 +33,13 @@ static void     ft_putstr(char *s, int *p);
 static void		cut(unsigned int number, int *p);
 static void		cuthex(size_t number, int capitalized, int *p);
 static void     ft_putnbr(int n, int *p);
+static void     ft_putnbr_u(unsigned int n, int *p);
 static void     ft_putnbr_hex(size_t h, int capitalized, int *p);
 static int      len_int(int a); 
+static int      len_u(unsigned int u);
 static int      len_hex(unsigned int h); 
 static void     ft_printspacezero(int type, int qtt, int *p); 
-static void     ft_printint(va_list *p_ap, int *p, struct fields *f);
+static void     ft_printint(va_list *p_ap, int signal, int *p, struct fields *f);
 static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f);
 static void     ft_printpointer(va_list *p_ap, int *p, struct fields *f);
 static void     ft_str_print(va_list *p_ap, int *p);
@@ -84,7 +86,7 @@ static void		cut(unsigned int number, int *p)
 static void		cuthex(size_t number, int capitalized, int *p)
 {
 	size_t		div;
-	size_t		mod;
+	int		mod;
 	char	c;
 
 	div = number / 16;
@@ -131,6 +133,14 @@ static void     ft_putnbr(int n, int *p)
 	else
 		ft_putchar('0', p);
 }
+static void     ft_putnbr_u(unsigned int u, int *p)
+{
+
+    if (u != 0)
+        cut(u, p);
+	else
+		ft_putchar('0', p);
+}
 static int      len_hex(unsigned int h) 
 {
     int length;
@@ -157,6 +167,18 @@ static int      len_int(int a)
     }
     return (length);
 }
+static int      len_u(unsigned int u) 
+{
+    int length;
+    
+    length = 1;
+    while (u > 9)
+    {
+        u = u/10;
+        length++;
+    }
+    return (length);
+}
 static void     ft_printspacezero(int type, int qtt, int *p) 
 {
     char c;
@@ -171,7 +193,7 @@ static void     ft_printspacezero(int type, int qtt, int *p)
         qtt--;
     }
 }
-/* POINTER */
+/* ADDRESS POINTER - p */
 static void     ft_printpointer(va_list *p_ap, int *p, struct fields *f) 
 {
     //Nao faz sentido precisao nem flag zero!
@@ -199,7 +221,7 @@ static void     ft_printpointer(va_list *p_ap, int *p, struct fields *f)
     }
 }
 
-/* HEX */
+/* HEX - h, H*/
 static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f)
 {
     unsigned int h;
@@ -256,9 +278,10 @@ static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct field
         }
 }
 
-/* INT */
-static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
+/* INT - d, i, u*/ 
+static void     ft_printint(va_list *p_ap, int signal, int *p, struct fields *f)
 { 
+        //signed and unsigned, depend on signal
         int d;
         int d_len;
         int neg;
@@ -266,11 +289,19 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
         int zero;
         
         neg = 0;
-        if((d = va_arg(*p_ap, int)) < 0)
-            neg = 1;
+        if(!signal)
+        {
+            d = va_arg(*p_ap, unsigned int);
+            d_len = len_u(d);
+        }
+        else
+        {
+            if((d = va_arg(*p_ap, int)) < 0)
+                neg = 1;
+            d_len = len_int(d);
+        }
 //ja capturou, segundo a logica do complemento a 2. Eh o q de fato sera apresentado OK
 
-        d_len = len_int(d);
         if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
         {
             zero = f->precision - d_len;
@@ -287,7 +318,10 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
                     ft_putchar('-', p);
                 if(zero > 0)
                     ft_printspacezero( 0, zero, p);
-                ft_putnbr(d, p);
+                if(signal)
+                    ft_putnbr(d, p);
+                else
+                    ft_putnbr_u(d, p);
             }
             else
             {
@@ -295,7 +329,10 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
                     ft_putchar('-', p);
                 if(zero > 0)
                     ft_printspacezero( 0, zero, p);
-                ft_putnbr(d, p);
+                if(signal)
+                    ft_putnbr(d, p);
+                else
+                    ft_putnbr_u(d, p);
                 ft_printspacezero( 1, space, p);
             }
         }
@@ -310,7 +347,11 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
                 if(neg)
                     ft_putchar('-', p);
                 ft_printspacezero(0, zero, p);
-                ft_putnbr(d, p);
+                if(signal)
+                    ft_putnbr(d, p);
+                else
+                    ft_putnbr_u(d, p);
+                
             }
             else
             {
@@ -318,7 +359,10 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
                 {
                     if(neg)
                         ft_putchar('-', p);
-                    ft_putnbr(d, p);
+                    if(signal)
+                        ft_putnbr(d, p);
+                    else
+                        ft_putnbr_u(d, p);
                     ft_printspacezero(1, space, p);
                 }
                 else
@@ -326,7 +370,10 @@ static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
                     ft_printspacezero(1, space, p);
                     if(neg)
                         ft_putchar('-', p);
-                    ft_putnbr(d, p);
+                    if(signal)
+                        ft_putnbr(d, p);
+                    else
+                        ft_putnbr_u(d, p);
                 }
             }
         }
@@ -453,7 +500,7 @@ static int      ft_fillprecision(va_list *p_ap, const char *fmt, int *fmt_inc, s
 }
 static int      ft_fillspecifier(const char *fmt, int *fmt_inc, struct fields *f)
 {
-    if( *fmt != 's' && *fmt != 'c' && *fmt != 'i' && *fmt != 'd' && *fmt != 'x' && *fmt != 'X' && *fmt != 'p')
+    if( *fmt != 's' && *fmt != 'c' && *fmt != 'i' && *fmt != 'u' && *fmt != 'd' && *fmt != 'x' && *fmt != 'X' && *fmt != 'p')
         return (-1);
     else
     {
@@ -509,7 +556,9 @@ static int     ft_fieldstorage(va_list *p_ap,const char *fmt,int *fmt_inc, struc
 static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p, struct fields *f)
 {
     if(sp == 'd' || sp == 'i') //OK
-        ft_printint(p_ap,p,f); 
+        ft_printint(p_ap, 1, p,f); 
+    if(sp == 'u') //OK
+        ft_printint(p_ap, 0, p,f); 
     else if(sp == 'c') //-------------------IMPLEMENTAR
         ft_char_print(p_ap,p); 
     else if(sp == 's') //-------------------IMPLEMENTAR
@@ -598,13 +647,14 @@ int            main()
     char *p;
     char *q;
 
+
     p = &c;
     q = &d;
 
     printf("\n\n\n");
-    qtt = printf("|%-42p|\n", q);
+    qtt = printf("|%42.20u|\n", -567);
     printf("%d caracteres impressos\n\n", qtt);
-    qtt = ft_printf("|%-42p|\n", q);
+    qtt = ft_printf("|%42.20u|\n", -567);
     printf("%d caracteres impressos\n\n", qtt);
 
     printf("\n\n\n");

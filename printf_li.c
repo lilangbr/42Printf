@@ -43,7 +43,7 @@ static void     ft_printint(va_list *p_ap, int signal, int *p, struct fields *f)
 static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f);
 static void     ft_printpointer(va_list *p_ap, int *p, struct fields *f);
 static void     ft_str_print(va_list *p_ap, int *p);
-static void     ft_char_print(va_list *p_ap, int *p);
+static void     ft_printchar(va_list *p_ap, int *p, struct fields *f);
 static void     ft_strformat_init(struct fields *f);
 static int      ft_fieldstorage(va_list *p_ap, const char *fmt,int *fmt_inc, struct fields *f);
 static int      ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f);
@@ -201,10 +201,8 @@ static void     ft_printpointer(va_list *p_ap, int *p, struct fields *f)
     int add_len;
     size_t add;
     int space;
-        
-    add = (size_t)va_arg(*p_ap, void *);//cplusplus.com/cstdio/printf/
 
-    
+    add = (size_t)va_arg(*p_ap, void *);//cplusplus.com/cstdio/printf/
     add_len = 12 + 2;//'0x'
     space = f->width - add_len;
     if(f->flagminus)
@@ -228,7 +226,7 @@ static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct field
     int h_len;
     int space;
     int zero;
-        
+
     h = va_arg(*p_ap, unsigned int);
     h_len = len_hex(h);
     if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
@@ -236,46 +234,46 @@ static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct field
         zero = f->precision - h_len;
         if (zero > 0)
             space = f->width - f->precision;
-            else
-                space = f->width - h_len;
-            if(!(f->flagminus))//alinhado a direita
-            {
-                ft_printspacezero( 1, space, p);
-                if(zero > 0)
-                    ft_printspacezero( 0, zero, p);
-                ft_putnbr_hex(h, capitalized, p);
-            }
-            else
-            {
-                if(zero > 0)
-                    ft_printspacezero( 0, zero, p);
-                ft_putnbr_hex(h, capitalized, p);
-                ft_printspacezero( 1, space, p);
-            }
+        else
+            space = f->width - h_len;
+        if(!(f->flagminus))//alinhado a direita
+        {
+            ft_printspacezero( 1, space, p);
+            if(zero > 0)
+                ft_printspacezero( 0, zero, p);
+            ft_putnbr_hex(h, capitalized, p);
         }
         else
         {
-            space = f->width - h_len;
-            zero = space;
-            if(f->flagzero)
+            if(zero > 0)
+                ft_printspacezero( 0, zero, p);
+            ft_putnbr_hex(h, capitalized, p);
+            ft_printspacezero( 1, space, p);
+        }
+    }
+    else
+    {
+        space = f->width - h_len;
+        zero = space;
+        if(f->flagzero)
+        {
+            ft_printspacezero(0, zero, p);
+            ft_putnbr_hex(h, capitalized, p);
+        }
+        else
+        {
+            if(f->flagminus)
             {
-                ft_printspacezero(0, zero, p);
-                ft_putnbr_hex(h, capitalized, p);
+                ft_putnbr_hex(h,capitalized, p);
+                ft_printspacezero(1, space, p);
             }
             else
             {
-                if(f->flagminus)
-                {
-                    ft_putnbr_hex(h,capitalized, p);
-                    ft_printspacezero(1, space, p);
-                }
-                else
-                {
-                    ft_printspacezero(1, space, p);
-                    ft_putnbr_hex(h,capitalized, p);
-                }
+                ft_printspacezero(1, space, p);
+                ft_putnbr_hex(h,capitalized, p);
             }
         }
+    }
 }
 
 /* INT - d, i, u*/ 
@@ -388,11 +386,25 @@ static void     ft_str_print(va_list *p_ap, int *p)
         ft_putstr(s, p);
 }
 /* CHAR */
-static void     ft_char_print(va_list *p_ap, int *p)
+static void     ft_printchar(va_list *p_ap, int *p, struct fields *f)
 { 
+    //Nao faz sentido precisao nem flag zero!
+    //fazer fillspecifier rejeitar. Ela já é uma static int: Usar ela!
         char c;
+        int space;
+
+        space = f->width - 1;
         c = (char)va_arg(*p_ap, int);
-        ft_putchar(c, p);
+        if(f->flagminus)
+        {
+            ft_putchar(c, p);
+            ft_printspacezero(1, space, p);
+        }
+        else
+        {
+            ft_printspacezero(1, space, p);
+            ft_putchar(c, p);
+        }
 }
 static void     ft_strformat_init(struct fields *f)
 {
@@ -559,8 +571,8 @@ static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p, struct fie
         ft_printint(p_ap, 1, p,f); 
     if(sp == 'u') //OK
         ft_printint(p_ap, 0, p,f); 
-    else if(sp == 'c') //-------------------IMPLEMENTAR
-        ft_char_print(p_ap,p); 
+    else if(sp == 'c') //OK
+        ft_printchar(p_ap,p, f); 
     else if(sp == 's') //-------------------IMPLEMENTAR
         ft_str_print(p_ap,p); 
     else if(sp == 'x') //OK
@@ -643,7 +655,7 @@ int            main()
 {
     int qtt;
     char c = 'C';
-    char d = 'd';
+    char d = '\0';
     char *p;
     char *q;
 
@@ -651,16 +663,12 @@ int            main()
     p = &c;
     q = &d;
 
-    printf("\n\n\n");
-    qtt = printf("|%42.20u|\n", -567);
-    printf("%d caracteres impressos\n\n", qtt);
-    qtt = ft_printf("|%42.20u|\n", -567);
-    printf("%d caracteres impressos\n\n", qtt);
 
     printf("\n\n\n");
-    printf("size_t            = %lu\n", sizeof(size_t));
-    printf("unsigned long int = %lu\n", sizeof(unsigned long int));
-    printf("unsigned int      = %lu\n", sizeof(unsigned int));
+    qtt = printf("|%-16c|\n", d);
+    printf("%d caracteres impressos\n\n", qtt);
+    qtt = ft_printf("|%-16c|\n", d);
+    printf("%d caracteres impressos\n\n", qtt);
 
 
     return (0);

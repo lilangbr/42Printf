@@ -31,10 +31,14 @@ struct fields{
 static void     ft_putchar(char c, int *p);
 static void     ft_putstr(char *s, int *p);
 static void		cut(unsigned int number, int *p);
+static void		cuthex(unsigned int number, int capitalized, int *p);
 static void     ft_putnbr(int n, int *p);
+static void     ft_putnbr_hex(unsigned int h, int capitalized, int *p);
 static int      len_int(int a); //COMPLETAR O CABECALHO
+static int      len_hex(unsigned int h); //COMPLETAR O CABECALHO
 static void     ft_printspacezero(int type, int qtt, int *p); //COMPLETAR CABECALHO
 static void     ft_printint(va_list *p_ap, int *p, struct fields *f);
+static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f);
 static void     ft_str_print(va_list *p_ap, int *p);
 static void     ft_char_print(va_list *p_ap, int *p);
 static void     ft_strformat_init(struct fields *f);
@@ -76,6 +80,34 @@ static void		cut(unsigned int number, int *p)
 	c = '0' + mod;
 	ft_putchar(c, p);
 }
+static void		cuthex(unsigned int number, int capitalized, int *p)
+{
+	int		div;
+	int		mod;
+	char	c;
+
+	div = number / 16;
+	mod = number % 16;
+	if (div != 0)
+		cuthex(div, capitalized, p);
+    if(mod < 10)
+        c = '0' + mod;
+    else
+    {
+        if(capitalized)
+            c = 'A' + (mod - 10);
+        else
+            c = 'a' + (mod - 10);
+    }
+	ft_putchar(c, p);
+}
+static void     ft_putnbr_hex(unsigned int h, int capitalized, int *p)
+{
+    if (h != 0)
+            cuthex(h,capitalized, p);
+	else
+		ft_putchar('0', p);
+}
 
 static void     ft_putnbr(int n, int *p)
 {
@@ -85,25 +117,12 @@ static void     ft_putnbr(int n, int *p)
 	{
 		if (n < 0)
 		{
-			//ft_putchar('-', p);
-            u = -n;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//if (n == -2147483648)
-			//{
-			//	n = (-1) * (n / 10);
-			//	cut(n, p);
-			//	ft_putchar('8', p);
-			//}
-			//else
-			//{
-			//	n = -n;
-			//  cut(n, p);
-			//}
-            cut(u, p);//!!!!!!!!!!!!!!!!!!!!!!!!!!
+            u = -n;
+            cut(u, p);
 		}
 		else
         {
-            u = n; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//cut(n, p);
+            u = n; 
             cut(u, p);
         }
 
@@ -111,7 +130,19 @@ static void     ft_putnbr(int n, int *p)
 	else
 		ft_putchar('0', p);
 }
-static int      len_int(int a) //COMPLETAR O CABECALHO
+static int      len_hex(unsigned int h) //COMPLETAR O CABECALHO
+{
+    int length;
+    
+    length = 1;
+    while (h > 15)
+    {
+        h = h/16;
+        length++;
+    }
+    return (length);
+}
+static int      len_int(int a) 
 {
     int length;
     
@@ -139,6 +170,63 @@ static void     ft_printspacezero(int type, int qtt, int *p) //COMPLETAR CABECAL
         qtt--;
     }
 }
+/* HEX */
+static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f) //CABECALHOOO
+{ 
+        unsigned int h;
+        int h_len;
+        int space;
+        int zero;
+        
+        h = va_arg(*p_ap, unsigned int);
+        h_len = len_hex(h);
+        if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
+        {
+            zero = f->precision - h_len;
+            if (zero > 0)
+                space = f->width - f->precision;
+            else
+                space = f->width - h_len;
+            if(!(f->flagminus))//alinhado a direita
+            {
+                ft_printspacezero( 1, space, p);
+                if(zero > 0)
+                    ft_printspacezero( 0, zero, p);
+                ft_putnbr_hex(h, capitalized, p);
+            }
+            else
+            {
+                if(zero > 0)
+                    ft_printspacezero( 0, zero, p);
+                ft_putnbr_hex(h, capitalized, p);
+                ft_printspacezero( 1, space, p);
+            }
+        }
+        else
+        {
+            space = f->width - h_len;
+            zero = space;
+            if(f->flagzero)
+            {
+                ft_printspacezero(0, zero, p);
+                ft_putnbr_hex(h, capitalized, p);
+            }
+            else
+            {
+                if(f->flagminus)
+                {
+                    ft_putnbr_hex(h,capitalized, p);
+                    ft_printspacezero(1, space, p);
+                }
+                else
+                {
+                    ft_printspacezero(1, space, p);
+                    ft_putnbr_hex(h,capitalized, p);
+                }
+            }
+        }
+}
+
 /* INT */
 static void     ft_printint(va_list *p_ap, int *p, struct fields *f)
 { 
@@ -342,7 +430,7 @@ static int      ft_fillprecision(va_list *p_ap, const char *fmt, int *fmt_inc, s
 }
 static int      ft_fillspecifier(const char *fmt, int *fmt_inc, struct fields *f)
 {
-    if( *fmt != 's' && *fmt != 'c' && *fmt != 'i' && *fmt != 'd')
+    if( *fmt != 's' && *fmt != 'c' && *fmt != 'i' && *fmt != 'd' && *fmt != 'x' && *fmt != 'X')
         return (-1);
     else
     {
@@ -397,6 +485,10 @@ static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p, struct fie
         ft_char_print(p_ap,p); 
     else if(sp == 's')
         ft_str_print(p_ap,p); 
+    else if(sp == 'x')
+        ft_printhex(p_ap, 0, p, f);
+    else if(sp == 'X')
+        ft_printhex(p_ap, 1, p, f);
     /*
     */
 }
@@ -471,28 +563,12 @@ int            main()
 {
     int qtt;
     char c = 'C';
-    //int i = -2147483649;
 
-    /*
-    printf("\n\nOriginal_Version\n");
-    qtt = printf("|Str:%s| |Char:%c| |Int d:%d| |Int i:%020.15i|\n", "String",c,9066,-21479);
-    printf("%d caracteres impressos\n", qtt);
-    printf("\n----------------------\n");
-    printf("\nDev_Version\n");
-    qtt = ft_printf("|Str:%s| |Char:%c| |Int d:%d| |Int i:%020.15i|\n", "String",c,9066,-21479);
-    printf("%d caracteres impressos\n", qtt);
-    printf("\n----------------------\n");
-
-    */
-    //printf("-0xffffffffe: %x 0x1 %x\n", -0xfffffffe, 0x1);
-
-
-    qtt = printf("|%042.4i|\n", 0x145);
+    qtt = printf("|%-42.20X|\n", 0xff54);
     printf("\n%d caracteres impressos\n", qtt);
-    qtt = ft_printf("|%042.4i|\n", 0x145);
+    qtt = ft_printf("|%-42.20X|\n", 0xff54);
     printf("\n%d caracteres impressos\n", qtt);
-    //
-    //printf("\n\n\n|%000023.d|\n\n", 42);
+
 
     return (0);
 }

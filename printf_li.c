@@ -29,7 +29,7 @@ struct fields{
     char    specifier;
 };
 static void     ft_putchar(char c, int *p);
-static void     ft_putstr(char *s, int *p);
+static void     ft_putstr(char *s, int *p, int qtt);
 static void		cut(unsigned int number, int *p);
 static void		cuthex(size_t number, int capitalized, int *p);
 static void     ft_putnbr(int n, int *p);
@@ -38,11 +38,14 @@ static void     ft_putnbr_hex(size_t h, int capitalized, int *p);
 static int      len_int(int a); 
 static int      len_u(unsigned int u);
 static int      len_hex(unsigned int h); 
+static int      len_add(size_t add);
+static int      strlen(char *s); 
+static char*    strcpy(char *s, int qtt);
 static void     ft_printspacezero(int type, int qtt, int *p); 
 static void     ft_printint(va_list *p_ap, int signal, int *p, struct fields *f);
 static void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f);
 static void     ft_printpointer(va_list *p_ap, int *p, struct fields *f);
-static void     ft_str_print(va_list *p_ap, int *p);
+static void     ft_printstr(va_list *p_ap, int *p, struct fields *f);
 static void     ft_printchar(va_list *p_ap, int *p, struct fields *f);
 static void     ft_strformat_init(struct fields *f);
 static int      ft_fieldstorage(va_list *p_ap, const char *fmt,int *fmt_inc, struct fields *f);
@@ -64,11 +67,14 @@ static void     ft_putchar(char c, int *p)
     write(1, &c, 1);
     (*p)++;
 }
-static void     ft_putstr(char *s, int *p)
+static void     ft_putstr(char *s, int *p, int qtt)
 {
     if (s)
-        while (*s)
+        while (*s && qtt)
+        {
             ft_putchar(*s++, p);
+            qtt--;
+        }
 }
 static void		cut(unsigned int number, int *p)
 {
@@ -153,6 +159,18 @@ static int      len_hex(unsigned int h)
     }
     return (length);
 }
+static int      len_add(size_t add) 
+{
+    int length;
+    
+    length = 1;
+    while (add > 15)
+    {
+        add = add/16;
+        length++;
+    }
+    return (length);
+}
 static int      len_int(int a) 
 {
     int length;
@@ -203,18 +221,18 @@ static void     ft_printpointer(va_list *p_ap, int *p, struct fields *f)
     int space;
 
     add = (size_t)va_arg(*p_ap, void *);//cplusplus.com/cstdio/printf/
-    add_len = 12 + 2;//'0x'
+    add_len = len_add(add) + 2;//'0x'
     space = f->width - add_len;
     if(f->flagminus)
     {
-        ft_putstr("0x",p);
+        ft_putstr("0x",p, 2);
         ft_putnbr_hex(add, 0, p);
         ft_printspacezero(1, space, p);
     }
     else
     {
         ft_printspacezero(1, space, p);
-        ft_putstr("0x",p);
+        ft_putstr("0x",p, 2);
         ft_putnbr_hex(add, 0, p);
     }
 }
@@ -379,11 +397,80 @@ static void     ft_printint(va_list *p_ap, int signal, int *p, struct fields *f)
 
 
 /* STRING */
-static void     ft_str_print(va_list *p_ap, int *p)
+static int      strlen(char *s) 
+{
+    int count;
+    //if(!s)
+    //    return(6); //(null)
+    count = 0;
+    while(*s)
+    {
+        count++;
+        s++;
+    }
+    return(count);
+}
+/*
+static char*    strcpy(char *s, int qtt) //CABECALHOOOOOOOO
+{
+    int i;
+    char *t;
+
+    if(!(t = malloc((qtt + 1)*sizeof(char))))
+        return(NULL);
+
+    i = 0;
+    while(i < qtt)
+    {
+        t[i] = s[i];
+        i++;
+    }
+    t[i] = '\0';
+    return(t);
+}
+*/
+
+static void     ft_printstr(va_list *p_ap, int *p, struct fields *f) 
 { 
         char *s;
+        char *t;
+        int str_len;
+        int space;
+        int qtt;
+        
         s = va_arg(*p_ap, char *);
-        ft_putstr(s, p);
+        if(!s)
+        {
+            //s = malloc( 7 * sizeof(char));
+            s = "(null)";
+        } 
+        str_len = strlen(s);
+        qtt = str_len;
+
+        if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
+        {
+            if(f->precision < str_len)
+            {
+                //t = strcpy(s,f->precision);
+                qtt = f->precision;
+                space = f->width - f->precision;
+                //use_t = 1;
+            }
+            else
+                space = f->width - str_len;
+        }
+        else
+            space = f->width - str_len;
+        if(!(f->flagminus))//alinhado a direita
+        {
+            ft_printspacezero( 1, space, p);
+            ft_putstr(s, p, qtt);
+        }
+        else
+        {
+            ft_putstr(s, p, qtt);
+            ft_printspacezero( 1, space, p);
+        }
 }
 /* CHAR */
 static void     ft_printchar(va_list *p_ap, int *p, struct fields *f)
@@ -573,8 +660,8 @@ static void     ft_specifier_redirect(va_list *p_ap, char sp, int *p, struct fie
         ft_printint(p_ap, 0, p,f); 
     else if(sp == 'c') //OK
         ft_printchar(p_ap,p, f); 
-    else if(sp == 's') //-------------------IMPLEMENTAR
-        ft_str_print(p_ap,p); 
+    else if(sp == 's') //OK
+        ft_printstr(p_ap,p, f); 
     else if(sp == 'x') //OK
         ft_printhex(p_ap, 0, p, f);
     else if(sp == 'X') //OK
@@ -658,6 +745,8 @@ int            main()
     char d = '\0';
     char *p;
     char *q;
+    char *s = "alo vc!!";
+    char *v;
 
 
     p = &c;
@@ -665,10 +754,18 @@ int            main()
 
 
     printf("\n\n\n");
-    qtt = printf("|%-16c|\n", d);
+    qtt = printf("|%-16.4s|\n", s);
     printf("%d caracteres impressos\n\n", qtt);
-    qtt = ft_printf("|%-16c|\n", d);
+    qtt = ft_printf("|%-16.4s|\n", s);
     printf("%d caracteres impressos\n\n", qtt);
+
+    printf("\n\n\n");
+    qtt = printf("|%-16p|\n", &d);
+    printf("%d caracteres impressos\n\n", qtt);
+    qtt = ft_printf("|%-16p|\n", &d);
+    printf("%d caracteres impressos\n\n", qtt);
+
+    //printf("|%-42.23s|\n", "alo vc!!!");
 
 
     return (0);

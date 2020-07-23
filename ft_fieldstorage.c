@@ -6,13 +6,14 @@
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/09 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/07/23 18:03:47 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/23 20:13:21 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int		ft_fieldstorage(va_list *p_ap, const char *fmt, int *fmt_inc, struct fields *f)
+int		ft_fieldstorage(va_list *p_ap, const char *fmt,\
+		int *fmt_inc, struct fields *f)
 {
 	int fmt_acc;
 

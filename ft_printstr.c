@@ -51,7 +51,10 @@ void     ft_printstr(va_list *p_ap, int *p, struct fields *f)
             space = f->width - str_len;
         if(!(f->flagminus))//alinhado a direita
         {
-            ft_printspacezero( 1, space, p);
+            if(f->flagzero)
+                ft_printspacezero(0, space, p); //******************************
+            else
+                ft_printspacezero( 1, space, p);
             ft_putstr(s, p, qtt);
         }
         else

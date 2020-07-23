@@ -74,9 +74,9 @@ void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f)
     {
         space = f->width - h_len;
         zero = space;
-        if(f->flagzero)
+        if(f->flagzero && !f->flagminus) //!!!!!!!!!!!!!!
         {
-            ft_printspacezero(0, zero, p);
+            ft_printspacezero(0, zero, p); //n eh space??????????????????
             if(h_len) //***************************************
                 ft_putnbr_hex(h, capitalized, p);
         }

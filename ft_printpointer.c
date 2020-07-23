@@ -24,6 +24,13 @@ static int      len_add(size_t add)
     }
     return (length);
 }
+static int min(int n)
+{
+    if(n < 0)
+        return(0);
+    else
+        return(n);
+}
 void     ft_printpointer(va_list *p_ap, int *p, struct fields *f) 
 {
     //Nao faz sentido precisao nem flag zero!
@@ -31,20 +38,68 @@ void     ft_printpointer(va_list *p_ap, int *p, struct fields *f)
     int add_len;
     size_t add;
     int space;
+    int zero;
 
     add = (size_t)va_arg(*p_ap, void *);//cplusplus.com/cstdio/printf/
     add_len = len_add(add) + 2;//'0x'
-    space = f->width - add_len;
-    if(f->flagminus)
+    //space = f->width - add_len;
+    if(!f->precision && !add && f->point)
+        add_len = 2;
+    if(f->point && (f->precision >= 0))
     {
-        ft_putstr("0x",p, 2);
-        ft_putnbr_hex(add, 0, p);
-        ft_printspacezero(1, space, p);
+        zero = min(f->precision) - len_add(add);
+        if(zero > 0)
+            space = f->width - f->precision;
+        else            
+            space = f->width - add_len;
+    
+        if(!f->flagminus) //alinhado a direita
+        {
+            ft_printspacezero(1, space, p);
+            ft_putstr("0x",p, 2);
+            if(zero > 0)
+                ft_printspacezero(0, zero, p);
+            if(f->precision != 0)
+                ft_putnbr_hex(add, 0, p);
+        }
+        else
+        {
+            ft_putstr("0x",p, 2);
+            if(zero > 0)
+                ft_printspacezero(0, zero, p);
+            if(f->precision != 0)
+                ft_putnbr_hex(add, 0, p);
+            ft_printspacezero(1, space, p);
+        }
     }
     else
     {
-        ft_printspacezero(1, space, p);
-        ft_putstr("0x",p, 2);
-        ft_putnbr_hex(add, 0, p);
+        space = f->width - add_len;
+        zero = space;
+        if(f->flagzero && !f->flagminus)
+        {
+            ft_printspacezero(0, space, p);
+            ft_putstr("0x",p, 2);
+            if(len_add(add))
+                ft_putnbr_hex(add, 0, p);
+        }
+        else
+        {
+            if(f->flagminus)
+            {
+                ft_putstr("0x",p, 2);
+                if(len_add(add))
+                    ft_putnbr_hex(add, 0, p);
+                ft_printspacezero(1, space, p);
+            }
+            else
+            {
+                ft_printspacezero(1, space, p);
+                ft_putstr("0x",p, 2);
+                if(len_add(add))
+                    ft_putnbr_hex(add, 0, p);
+            }
+        }
     }
 }
+

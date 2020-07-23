@@ -42,6 +42,6 @@ clean:
 fclean: clean
 	@/bin/rm -f $(NAME)
 re: fclean all
-test: $(NAME)
-	gcc main.c -L. -lftprintf
-	./a.out
+#test: $(NAME)
+#	gcc main.c -L. -lftprintf
+#	./a.out

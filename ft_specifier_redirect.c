@@ -28,5 +28,7 @@ void     ft_specifier_redirect(va_list *p_ap, char sp, int *p, struct fields *f)
         ft_printhex(p_ap, 1, p, f);
     else if(sp == 'p') //OK
         ft_printpointer(p_ap, p, f);
+    else if(sp == '%')
+        ft_printpercent(p, f);
 }
 

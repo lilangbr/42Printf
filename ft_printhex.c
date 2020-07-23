@@ -24,6 +24,13 @@ static int      len_hex(unsigned int h)
     }
     return (length);
 }
+//static int min(int n)
+//{
+//    if(n < 0)
+//        return(0);
+//    else
+//        return(n);
+//}
 void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f)
 {
     unsigned int h;
@@ -33,7 +40,13 @@ void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f)
 
     h = va_arg(*p_ap, unsigned int);
     h_len = len_hex(h);
-    if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
+
+    if(!f->precision && !h && f->point)
+        h_len = 0;
+
+
+
+    if (f->point && (f->precision >= 0)) //se tiver precisao, quem conta eh ela (p efeito de 0)
     {
         zero = f->precision - h_len;
         if (zero > 0)
@@ -45,13 +58,15 @@ void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f)
             ft_printspacezero( 1, space, p);
             if(zero > 0)
                 ft_printspacezero( 0, zero, p);
-            ft_putnbr_hex(h, capitalized, p);
+            if(h_len) //***************************************
+                ft_putnbr_hex(h, capitalized, p);
         }
         else
         {
             if(zero > 0)
                 ft_printspacezero( 0, zero, p);
-            ft_putnbr_hex(h, capitalized, p);
+            if(h_len) //***************************************
+                ft_putnbr_hex(h, capitalized, p);
             ft_printspacezero( 1, space, p);
         }
     }
@@ -62,19 +77,22 @@ void     ft_printhex(va_list *p_ap, int capitalized, int *p, struct fields *f)
         if(f->flagzero)
         {
             ft_printspacezero(0, zero, p);
-            ft_putnbr_hex(h, capitalized, p);
+            if(h_len) //***************************************
+                ft_putnbr_hex(h, capitalized, p);
         }
         else
         {
             if(f->flagminus)
             {
-                ft_putnbr_hex(h,capitalized, p);
+                if(h_len) //***************************************
+                    ft_putnbr_hex(h,capitalized, p);
                 ft_printspacezero(1, space, p);
             }
             else
             {
                 ft_printspacezero(1, space, p);
-                ft_putnbr_hex(h,capitalized, p);
+                if(h_len) //***************************************
+                    ft_putnbr_hex(h,capitalized, p);
             }
         }
     }

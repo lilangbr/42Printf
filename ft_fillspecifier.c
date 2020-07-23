@@ -14,7 +14,7 @@
 
 int      ft_fillspecifier(const char *fmt, int *fmt_inc, struct fields *f)
 {
-    if( *fmt != 's' && *fmt != 'c' && *fmt != 'i' && *fmt != 'u' && *fmt != 'd' && *fmt != 'x' && *fmt != 'X' && *fmt != 'p')
+    if( *fmt != 's' && *fmt != 'c' && *fmt != 'i' && *fmt != 'u' && *fmt != 'd' && *fmt != 'x' && *fmt != 'X' && *fmt != 'p' && *fmt != '%')
         return (-1);
     else
     {

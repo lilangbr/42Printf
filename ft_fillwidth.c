@@ -27,12 +27,16 @@ void     ft_fillwidth(va_list *p_ap, const char *fmt,int *fmt_inc,struct fields 
         {
             f->width = va_arg(*p_ap, int);
             fmt++;
+//            printf("\n***********width = %d\n", f->width);
+//            printf("\n***********fmt = %c\n", *fmt);
             (*fmt_inc)++;
         }
         else
         {
             f->width = ft_getnumber(fmt,fmt_inc);
             fmt = fmt + *fmt_inc;
+//            printf("\n***********width = %d\n", f->width);
+//            printf("\n-----------fmt = %c\n", *fmt);
         }
         if(*fmt == '.')
         {   
@@ -40,5 +44,11 @@ void     ft_fillwidth(va_list *p_ap, const char *fmt,int *fmt_inc,struct fields 
             (*fmt_inc)++;
         }
         
+    }
+    if(f->width < 0) //**************************************16julho
+    {
+        f->flagminus = 1;
+        f->flagzero = 0;
+        f->width = - f->width;
     }
 }

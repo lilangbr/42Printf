@@ -39,7 +39,7 @@ void     ft_printstr(va_list *p_ap, int *p, struct fields *f)
 
         if (f->point) //se tiver precisao, quem conta eh ela (p efeito de 0)
         {
-            if(f->precision < str_len)
+            if(f->precision < str_len && f->precision >= 0)
             {
                 qtt = f->precision;
                 space = f->width - f->precision;

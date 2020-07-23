@@ -12,12 +12,13 @@
 
 #include "ft_printf.h"
 
-int     ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f)
+void     ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f)
 {
     int count_minus;
     int count_zero;
     count_minus = 0;
     count_zero = 0;
+
     while(*fmt == '-' || *fmt == '0')
     {
         if(*fmt == '-' && count_minus == 0)
@@ -30,10 +31,7 @@ int     ft_fillflags(const char *fmt, int *fmt_inc, struct fields *f)
             f->flagzero = 1;
             count_zero++;
         }
-        if(count_minus && count_zero)
-            return(-1);
         fmt++;
         (*fmt_inc)++;
     }
-    return (0);
 }

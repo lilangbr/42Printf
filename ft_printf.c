@@ -50,7 +50,7 @@ int             ft_printf(const char *fmt, ...)
                 ft_specifier_redirect(&ap, strformat->specifier, &printed, strformat);
                 fmt = fmt + fmt_inc;
 
-               /* TO DEBUG FLAG STORAGE
+              /* TO DEBUG FLAG STORAGE
                 *
                 printf("\nminus( %d ) ", strformat->flagminus);
                 printf("zero( %d ) ",strformat->flagzero);

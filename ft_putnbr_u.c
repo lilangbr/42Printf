@@ -6,7 +6,7 @@
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/09 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/06/09 15:56:56 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/24 00:28:57 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ static void	cut(unsigned int number, int *p)
 	c = '0' + mod;
 	ft_putchar(c, p);
 }
+
 void		ft_putnbr_u(unsigned int u, int *p)
 {
 	if (u != 0)

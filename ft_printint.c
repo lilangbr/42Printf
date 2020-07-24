@@ -6,13 +6,13 @@
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/09 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/06/09 15:56:56 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/23 23:51:14 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int		len_int(int a) 
+static int		len_int(int a)
 {
 	int			length;
 	long int	b;
@@ -23,11 +23,12 @@ static int		len_int(int a)
 		b = -b;
 	while (b > 9)
 	{
-		b = b/10;
+		b = b / 10;
 		length++;
 	}
 	return (length);
 }
+
 static int		len_u(unsigned int u)
 {
 	int length;
@@ -35,18 +36,20 @@ static int		len_u(unsigned int u)
 	length = 1;
 	while (u > 9)
 	{
-		u = u/10;
+		u = u / 10;
 		length++;
 	}
 	return (length);
 }
+
 static int		min(int n)
 {
-	if(n < 0)
-		return(0);
+	if (n < 0)
+		return (0);
 	else
-		return(n);
+		return (n);
 }
+
 void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 {
 	int d;
@@ -54,7 +57,7 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 	int neg;
 	int space;
 	int zero;
-    
+
 	neg = 0;
 	if (!signal)
 	{
@@ -80,14 +83,14 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 			space--;
 		if (!(f->flagminus))
 		{
-			ft_printspacezero( 1, space, p);
+			ft_printspacezero(1, space, p);
 			if (neg)
 				ft_putchar('-', p);
-			if(zero > 0)
-				ft_printspacezero( 0, zero, p);
-			if(d_len)
+			if (zero > 0)
+				ft_printspacezero(0, zero, p);
+			if (d_len)
 			{
-				if(signal)
+				if (signal)
 					ft_putnbr(d, p);
 				else
 					ft_putnbr_u(d, p);
@@ -97,32 +100,32 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 		{
 			if (neg)
 				ft_putchar('-', p);
-			if(zero > 0)
-				ft_printspacezero( 0, zero, p);
-			if(d_len)
+			if (zero > 0)
+				ft_printspacezero(0, zero, p);
+			if (d_len)
 			{
-				if(signal)
+				if (signal)
 					ft_putnbr(d, p);
 				else
 					ft_putnbr_u(d, p);
 			}
-			ft_printspacezero( 1, space, p);
+			ft_printspacezero(1, space, p);
 		}
 	}
 	else
 	{
-		if(neg)
+		if (neg)
 			d_len++;
 		space = f->width - d_len;
 		zero = space;
-		if(f->flagzero && !f->flagminus)
+		if (f->flagzero && !f->flagminus)
 		{
-			if(neg)
+			if (neg)
 				ft_putchar('-', p);
 			ft_printspacezero(0, zero, p);
-			if(d_len)
+			if (d_len)
 			{
-				if(signal)
+				if (signal)
 					ft_putnbr(d, p);
 				else
 					ft_putnbr_u(d, p);
@@ -130,13 +133,13 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 		}
 		else
 		{
-			if(f->flagminus)
+			if (f->flagminus)
 			{
-				if(neg)
+				if (neg)
 					ft_putchar('-', p);
-				if(d_len)
+				if (d_len)
 				{
-					if(signal)
+					if (signal)
 						ft_putnbr(d, p);
 					else
 						ft_putnbr_u(d, p);
@@ -146,11 +149,11 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 			else
 			{
 				ft_printspacezero(1, space, p);
-				if(neg)
+				if (neg)
 					ft_putchar('-', p);
-				if(d_len)
+				if (d_len)
 				{
-					if(signal)
+					if (signal)
 						ft_putnbr(d, p);
 					else
 						ft_putnbr_u(d, p);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printpointer.c                                 :+:      :+:    :+:   */
+/*   ft_printpointer.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/09 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/06/09 15:56:56 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/24 00:11:38 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,20 @@ static int	len_add(size_t add)
 	length = 1;
 	while (add > 15)
 	{
-		add = add/16;
+		add = add / 16;
 		length++;
 	}
 	return (length);
 }
+
 static int	min(int n)
 {
 	if (n < 0)
-		return(0);
+		return (0);
 	else
-		return(n);
+		return (n);
 }
+
 void		ft_printpointer(va_list *p_ap, int *p, t_fields *f)
 {
 	int		add_len;
@@ -52,7 +54,7 @@ void		ft_printpointer(va_list *p_ap, int *p, t_fields *f)
 		if (!f->flagminus)
 		{
 			ft_printspacezero(1, space, p);
-			ft_putstr("0x",p, 2);
+			ft_putstr("0x", p, 2);
 			if (zero > 0)
 				ft_printspacezero(0, zero, p);
 			if (f->precision != 0)
@@ -60,7 +62,7 @@ void		ft_printpointer(va_list *p_ap, int *p, t_fields *f)
 		}
 		else
 		{
-			ft_putstr("0x",p, 2);
+			ft_putstr("0x", p, 2);
 			if (zero > 0)
 				ft_printspacezero(0, zero, p);
 			if (f->precision != 0)
@@ -75,7 +77,7 @@ void		ft_printpointer(va_list *p_ap, int *p, t_fields *f)
 		if (f->flagzero && !f->flagminus)
 		{
 			ft_printspacezero(0, space, p);
-			ft_putstr("0x",p, 2);
+			ft_putstr("0x", p, 2);
 			if (len_add(add))
 				ft_putnbr_hex(add, 0, p);
 		}
@@ -83,7 +85,7 @@ void		ft_printpointer(va_list *p_ap, int *p, t_fields *f)
 		{
 			if (f->flagminus)
 			{
-				ft_putstr("0x",p, 2);
+				ft_putstr("0x", p, 2);
 				if (len_add(add))
 					ft_putnbr_hex(add, 0, p);
 				ft_printspacezero(1, space, p);
@@ -91,7 +93,7 @@ void		ft_printpointer(va_list *p_ap, int *p, t_fields *f)
 			else
 			{
 				ft_printspacezero(1, space, p);
-				ft_putstr("0x",p, 2);
+				ft_putstr("0x", p, 2);
 				if (len_add(add))
 					ft_putnbr_hex(add, 0, p);
 			}

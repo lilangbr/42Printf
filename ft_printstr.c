@@ -6,7 +6,7 @@
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/09 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/06/09 15:56:56 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/24 00:19:15 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,9 @@ static int	strlen(char *s)
 		count++;
 		s++;
 	}
-	return(count);
+	return (count);
 }
+
 void		ft_printstr(va_list *p_ap, int *p, t_fields *f)
 {
 	char	*s;

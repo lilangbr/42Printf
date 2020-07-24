@@ -6,7 +6,7 @@
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/09 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/06/09 15:56:56 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/24 00:26:40 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static void	cuthex(size_t number, int capitalized, int *p)
 	}
 	ft_putchar(c, p);
 }
+
 void		ft_putnbr_hex(size_t h, int capitalized, int *p)
 {
 	if (h != 0)

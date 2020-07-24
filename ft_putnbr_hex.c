@@ -12,9 +12,9 @@
 
 #include "ft_printf.h"
 
-static void		cuthex(size_t number, int capitalized, int *p)
+static void	cuthex(size_t number, int capitalized, int *p)
 {
-	size_t		div;
+	size_t	div;
 	int		mod;
 	char	c;
 
@@ -22,21 +22,21 @@ static void		cuthex(size_t number, int capitalized, int *p)
 	mod = number % 16;
 	if (div != 0)
 		cuthex(div, capitalized, p);
-    if(mod < 10)
-        c = '0' + mod;
-    else
-    {
-        if(capitalized)
-            c = 'A' + (mod - 10);
-        else
-            c = 'a' + (mod - 10);
-    }
+	if (mod < 10)
+		c = '0' + mod;
+	else
+	{
+		if (capitalized)
+			c = 'A' + (mod - 10);
+		else
+			c = 'a' + (mod - 10);
+	}
 	ft_putchar(c, p);
 }
-void     ft_putnbr_hex(size_t h, int capitalized, int *p)
+void		ft_putnbr_hex(size_t h, int capitalized, int *p)
 {
-    if (h != 0)
-            cuthex(h,capitalized, p);
+	if (h != 0)
+		cuthex(h, capitalized, p);
 	else
 		ft_putchar('0', p);
 }

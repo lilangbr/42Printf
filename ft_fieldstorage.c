@@ -13,7 +13,7 @@
 #include "ft_printf.h"
 
 int		ft_fieldstorage(va_list *p_ap, const char *fmt,\
-		int *fmt_inc, struct fields *f)
+		int *fmt_inc, t_fields *f)
 {
 	int fmt_acc;
 

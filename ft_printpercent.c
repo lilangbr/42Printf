@@ -12,29 +12,29 @@
 
 #include "ft_printf.h"
 
-void     ft_printpercent(int *p, struct fields *f)
-{ 
-        int space;
-        int zero;
-            
-        space = f->width - 1; // - d_len;
-        zero = space;
-        if(f->flagzero && !f->flagminus) //**********************
-        {
-            ft_printspacezero(0, zero, p);
-            ft_putchar('%', p);                
-        }
-        else
-        {
-            if(f->flagminus)
-            {
-                ft_putchar('%', p);
-                ft_printspacezero(1, space, p);
-            }
-            else
-            {
-                ft_printspacezero(1, space, p);
-                ft_putchar('%', p);
-            }
-        }
+void	ft_printpercent(int *p, t_fields *f)
+{
+	int space;
+	int zero;
+
+	space = f->width - 1;
+	zero = space;
+	if(f->flagzero && !f->flagminus)
+	{
+		ft_printspacezero(0, zero, p);
+		ft_putchar('%', p);                
+	}
+	else
+	{
+		if(f->flagminus)
+		{
+			ft_putchar('%', p);
+			ft_printspacezero(1, space, p);
+		}
+		else
+		{
+			ft_printspacezero(1, space, p);
+			ft_putchar('%', p);
+		}
+	}
 }

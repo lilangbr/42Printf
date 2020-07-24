@@ -12,12 +12,12 @@
 
 #include "ft_printf.h"
 
-void     ft_putstr(char *s, int *p, int qtt)
+void	ft_putstr(char *s, int *p, int qtt)
 {
-    if (s)
-        while (*s && qtt)
-        {
-            ft_putchar(*s++, p);
-            qtt--;
-        }
+	if (s)
+		while (*s && qtt)
+		{
+			ft_putchar(*s++, p);
+			qtt--;
+		}
 }

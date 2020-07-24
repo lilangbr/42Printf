@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void	ft_printchar(va_list *p_ap, int *p, struct fields *f)
+void	ft_printchar(va_list *p_ap, int *p, t_fields *f)
 {
 	char	c;
 	int		space;

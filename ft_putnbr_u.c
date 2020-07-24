@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static void		cut(unsigned int number, int *p)
+static void	cut(unsigned int number, int *p)
 {
 	int		div;
 	int		mod;
@@ -25,12 +25,10 @@ static void		cut(unsigned int number, int *p)
 	c = '0' + mod;
 	ft_putchar(c, p);
 }
-
-void     ft_putnbr_u(unsigned int u, int *p)
+void		ft_putnbr_u(unsigned int u, int *p)
 {
-
-    if (u != 0)
-        cut(u, p);
+	if (u != 0)
+		cut(u, p);
 	else
 		ft_putchar('0', p);
 }

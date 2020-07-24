@@ -13,7 +13,7 @@
 #include "ft_printf.h"
 
 void	ft_fillwidth(va_list *p_ap, const char *fmt, int *fmt_inc, \
-		struct fields *f)
+		t_fields *f)
 {
 	if (*fmt == '.')
 	{

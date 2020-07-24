@@ -12,17 +12,17 @@
 
 #include "ft_printf.h"
 
-void     ft_printspacezero(int type, int qtt, int *p) 
+void	ft_printspacezero(int type, int qtt, int *p) 
 {
-    char c;
+	char c;
 
-    if(type == 0)
-        c = '0';
-    else
-        c = ' ';
-    while(qtt > 0)
-    {
-        ft_putchar(c, p);
-        qtt--;
-    }
+	if (type == 0)
+		c = '0';
+	else
+		c = ' ';
+	while (qtt > 0)
+	{
+		ft_putchar(c, p);
+		qtt--;
+	}
 }

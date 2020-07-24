@@ -12,12 +12,12 @@
 
 #include "ft_printf.h"
 
-void     ft_strformat_init(struct fields *f)
+void	ft_strformat_init(t_fields *f)
 {
-    f->flagminus = 0;
-    f->flagzero = 0;
-    f->width = 0;
-    f->point = 0;
-    f->precision = 0;
-    f->specifier = '\0';
+	f->flagminus = 0;
+	f->flagzero = 0;
+	f->width = 0;
+	f->point = 0;
+	f->precision = 0;
+	f->specifier = '\0';
 }

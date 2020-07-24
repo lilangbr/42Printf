@@ -6,35 +6,34 @@
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/09 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/07/23 18:29:13 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/24 19:14:28 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static void aux(int mode, t_fields *f, int *fmt_inc)
+static void	aux(int mode, t_fields *f, int *fmt_inc)
 {
-		if (mode == 1)
-		{
-			f->point = 1;
-			f->width = 0;
-			(*fmt_inc)++;
-		}
-		else if (mode == 2)
-		{
-			f->point = 1;
-			(*fmt_inc)++;
-		}
-		else if (mode == 3)
-		{
-			f->flagminus = 1;
-			f->flagzero = 0;
-			f->width = -f->width;
-		}
-
+	if (mode == 1)
+	{
+		f->point = 1;
+		f->width = 0;
+		(*fmt_inc)++;
+	}
+	else if (mode == 2)
+	{
+		f->point = 1;
+		(*fmt_inc)++;
+	}
+	else if (mode == 3)
+	{
+		f->flagminus = 1;
+		f->flagzero = 0;
+		f->width = -f->width;
+	}
 }
 
-void	ft_fillwidth(va_list *p_ap, const char *fmt, int *fmt_inc, \
+void		ft_fillwidth(va_list *p_ap, const char *fmt, int *fmt_inc, \
 		t_fields *f)
 {
 	if (*fmt == '.')

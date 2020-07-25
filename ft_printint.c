@@ -50,6 +50,17 @@ static int		min(int n)
 		return (n);
 }
 
+static void print_mod(int d_len, int signal, long int d, int *p)
+{
+	if (d_len)
+	{
+		if (signal)
+			ft_putnbr(d, p);
+		else
+			ft_putnbr_u(d, p);
+	}
+}
+
 void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 {
 	int d;
@@ -74,8 +85,7 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 		d_len = 0;
 	if (f->point && (f->precision >= 0))
 	{
-		zero = min(f->precision) - d_len;
-		if (zero > 0)
+		if ((zero = min(f->precision) - d_len) > 0)
 			space = f->width - min(f->precision);
 		else
 			space = f->width - d_len;
@@ -86,29 +96,17 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 			ft_printspacezero(1, space, p);
 			if (neg)
 				ft_putchar('-', p);
-			if (zero > 0)
+			//if (zero > 0)
 				ft_printspacezero(0, zero, p);
-			if (d_len)
-			{
-				if (signal)
-					ft_putnbr(d, p);
-				else
-					ft_putnbr_u(d, p);
-			}
+			print_mod(d_len, signal, d, p);
 		}
 		else
 		{
 			if (neg)
 				ft_putchar('-', p);
-			if (zero > 0)
+			//if (zero > 0)
 				ft_printspacezero(0, zero, p);
-			if (d_len)
-			{
-				if (signal)
-					ft_putnbr(d, p);
-				else
-					ft_putnbr_u(d, p);
-			}
+			print_mod(d_len,signal,d, p);
 			ft_printspacezero(1, space, p);
 		}
 	}
@@ -123,13 +121,7 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 			if (neg)
 				ft_putchar('-', p);
 			ft_printspacezero(0, zero, p);
-			if (d_len)
-			{
-				if (signal)
-					ft_putnbr(d, p);
-				else
-					ft_putnbr_u(d, p);
-			}
+			print_mod(d_len, signal, d, p);
 		}
 		else
 		{
@@ -137,13 +129,7 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 			{
 				if (neg)
 					ft_putchar('-', p);
-				if (d_len)
-				{
-					if (signal)
-						ft_putnbr(d, p);
-					else
-						ft_putnbr_u(d, p);
-				}
+				print_mod(d_len, signal, d, p);
 				ft_printspacezero(1, space, p);
 			}
 			else
@@ -151,13 +137,7 @@ void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 				ft_printspacezero(1, space, p);
 				if (neg)
 					ft_putchar('-', p);
-				if (d_len)
-				{
-					if (signal)
-						ft_putnbr(d, p);
-					else
-						ft_putnbr_u(d, p);
-				}
+				print_mod(d_len, signal, d, p);
 			}
 		}
 	}

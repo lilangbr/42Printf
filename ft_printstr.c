@@ -25,6 +25,25 @@ static int	strlen(char *s)
 	return (count);
 }
 
+static void aux_precision(int *space, int *qtt, int str_len, t_fields *f)
+{
+	if (f->precision < str_len && f->precision >= 0)
+	{
+		*qtt = f->precision;
+		*space = f->width - f->precision;
+	}
+	else
+		*space = f->width - str_len;
+}
+
+static void aux_flagminus(int space, int *p, char *s, int qtt, t_fields *f)
+{
+		if (f->flagzero)
+			ft_printspacezero(0, space, p);
+		else
+			ft_printspacezero(1, space, p);
+		ft_putstr(s, p, qtt);
+}
 void		ft_printstr(va_list *p_ap, int *p, t_fields *f)
 {
 	char	*s;
@@ -38,25 +57,11 @@ void		ft_printstr(va_list *p_ap, int *p, t_fields *f)
 	str_len = strlen(s);
 	qtt = str_len;
 	if (f->point)
-	{
-		if (f->precision < str_len && f->precision >= 0)
-		{
-			qtt = f->precision;
-			space = f->width - f->precision;
-		}
-		else
-			space = f->width - str_len;
-	}
+		aux_precision(&space, &qtt, str_len, f);
 	else
 		space = f->width - str_len;
 	if (!(f->flagminus))
-	{
-		if (f->flagzero)
-			ft_printspacezero(0, space, p);
-		else
-			ft_printspacezero(1, space, p);
-		ft_putstr(s, p, qtt);
-	}
+		aux_flagminus(space, p, s, qtt, f);
 	else
 	{
 		ft_putstr(s, p, qtt);

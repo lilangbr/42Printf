@@ -12,6 +12,28 @@
 
 #include "ft_printf.h"
 
+static int	aux(int mode, const char **fmt2, int *p, t_fields *f, int *fmt_inc, va_list *p_ap)
+{
+	if (mode == 1)
+	{
+		ft_putchar(**fmt2, p);
+		(*fmt2)++;
+		return (0);
+	}
+	else if (mode == 2)
+	{
+		ft_strformat_init(f);
+		if (ft_fieldstorage(p_ap, *fmt2, fmt_inc, f) == -1)
+		{
+			free(f);
+			return (-1);
+		}
+		ft_specifier_redirect(p_ap, f->specifier, p, f);
+		*fmt2 = *fmt2 + *fmt_inc;
+		return (0);
+	}
+	return (0);
+}
 int			ft_printf(const char *fmt, ...)
 {
 	int			printed;
@@ -19,38 +41,21 @@ int			ft_printf(const char *fmt, ...)
 	va_list		ap;
 	t_fields	*strformat;
 
-	if (!fmt)
+	if (!fmt || !(strformat = (t_fields*)malloc(sizeof(t_fields))))
 		return (-1);
 	printed = 0;
-	strformat = (t_fields*)malloc(sizeof(t_fields));
 	va_start(ap, fmt);
 	while (*fmt)
 	{
 		if (*fmt != '%')
-		{
-			ft_putchar(*fmt, &printed);
-			fmt++;
-		}
+			aux(1, &fmt, &printed, strformat, &fmt_inc, &ap);
 		else
 		{
 			fmt++;
 			if (*fmt == '%')
-			{
-				ft_putchar(*fmt, &printed);
-				fmt++;
-			}
-			else
-			{
-				ft_strformat_init(strformat);
-				if (ft_fieldstorage(&ap, fmt, &fmt_inc, strformat) == -1)
-				{
-					free(strformat);
-					return (-1);
-				}
-				ft_specifier_redirect(&ap, strformat->specifier,\
-				&printed, strformat);
-				fmt = fmt + fmt_inc;
-			}
+				aux(1, &fmt, &printed, strformat, &fmt_inc, &ap);
+			else if (aux(2, &fmt, &printed, strformat, &fmt_inc, &ap) == -1)
+				return(-1);
 		}
 	}
 	va_end(ap);

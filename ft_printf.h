@@ -19,6 +19,9 @@
 # include <stdio.h>
 
 typedef struct	s_fields{
+	va_list		ap;
+	int			printed;
+	int			fmt_inc;
 	int			flagzero;
 	int			flagminus;
 	int			width;

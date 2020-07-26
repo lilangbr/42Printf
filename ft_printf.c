@@ -22,7 +22,7 @@ static int	aux1(const char **fmt2, int *p)
 static int	aux2(const char **fmt2, t_fields *f)
 {
 	ft_strformat_init(f);
-	if (ft_fieldstorage(&(f->ap), *fmt2, &(f->fmt_inc), f) == -1)
+	if (ft_fieldstorage(*fmt2, f) == -1)
 	{
 		free(f);
 		return (-1);

@@ -12,31 +12,30 @@
 
 #include "ft_printf.h"
 
-int		ft_fieldstorage(va_list *p_ap, const char *fmt,\
-		int *fmt_inc, t_fields *f)
+int		ft_fieldstorage(const char *fmt, t_fields *f)
 {
 	int fmt_acc;
 
-	*fmt_inc = 0;
-	ft_fillflags(fmt, fmt_inc, f);
-	fmt += *fmt_inc;
-	fmt_acc = *fmt_inc;
-	*fmt_inc = 0;
-	ft_fillwidth(p_ap, fmt, fmt_inc, f);
-	fmt += *fmt_inc;
-	fmt_acc += *fmt_inc;
+	f->fmt_inc = 0;
+	ft_fillflags(fmt, &(f->fmt_inc), f);
+	fmt += f->fmt_inc;
+	fmt_acc = f->fmt_inc;
+	f->fmt_inc = 0;
+	ft_fillwidth(&(f->ap), fmt, &(f->fmt_inc), f);
+	fmt += f->fmt_inc;
+	fmt_acc += f->fmt_inc;
 	if (f->point)
 	{
-		*fmt_inc = 0;
-		if (ft_fillprecision(p_ap, fmt, fmt_inc, f) == -1)
+		f->fmt_inc = 0;
+		if (ft_fillprecision(&(f->ap), fmt, &(f->fmt_inc), f) == -1)
 			return (-1);
-		fmt += *fmt_inc;
-		fmt_acc += *fmt_inc;
+		fmt += f->fmt_inc;
+		fmt_acc += f->fmt_inc;
 	}
-	*fmt_inc = 0;
-	ft_fillspecifier(fmt, fmt_inc, f);
-	fmt += *fmt_inc;
-	fmt_acc += *fmt_inc;
-	*fmt_inc = fmt_acc;
+	f->fmt_inc = 0;
+	ft_fillspecifier(fmt, &(f->fmt_inc), f);
+	fmt += f->fmt_inc;
+	fmt_acc += f->fmt_inc;
+	f->fmt_inc = fmt_acc;
 	return (0);
 }

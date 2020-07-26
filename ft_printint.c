@@ -11,15 +11,15 @@
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
+/*
 typedef struct s_var
 {
 	int neg;
 	int d_len;
 	int signal;
-	int space;
-	int zero;
-}				t_var;
+		int space;
+		int zero;
+}				t_var;*/
 
 static int	len_int(int a)
 {
@@ -128,7 +128,7 @@ static void	aux_noprecision(t_fields *f, t_var *v, int *p, long int d)
 	}
 }
 
-void		ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
+void		ft_printint(int signal, t_fields *f)
 {
 	int		d;
 	t_var	*var;
@@ -136,23 +136,22 @@ void		ft_printint(va_list *p_ap, int signal, int *p, t_fields *f)
 	if (!(var = (t_var*)malloc(sizeof(t_var))))
 		return;
 	var->neg = 0;
-	var->signal = signal;
-	if (!signal)
-	{
-		d = va_arg(*p_ap, unsigned int);
+	if (!(var->signal = signal))
+	{ //if (!signal)
+		d = va_arg(f->ap, unsigned int);
 		var->d_len = len_u(d);
 	}
 	else
 	{
-		if ((d = va_arg(*p_ap, int)) < 0)
+		if ((d = va_arg(f->ap, int)) < 0)
 			var->neg = 1;
 		var->d_len = len_int(d);
 	}
 	if (!f->precision && !d && f->point)
 		var->d_len = 0;
 	if (f->point && (f->precision >= 0))
-		aux_precision(f, var, p, d);
+		aux_precision(f, var, &(f->printed), d);
 	else
-		aux_noprecision(f, var, p, d);
+		aux_noprecision(f, var, &(f->printed), d);
 	free(var);
 }

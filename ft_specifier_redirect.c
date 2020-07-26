@@ -15,9 +15,9 @@
 void	ft_specifier_redirect(va_list *p_ap, char sp, int *p, t_fields *f)
 {
 	if (sp == 'd' || sp == 'i')
-		ft_printint(p_ap, 1, p, f);
+		ft_printint(1, f);
 	else if (sp == 'u')
-		ft_printint(p_ap, 0, p, f);
+		ft_printint(0, f);
 	else if (sp == 'c')
 		ft_printchar(p_ap, p, f);
 	else if (sp == 's')

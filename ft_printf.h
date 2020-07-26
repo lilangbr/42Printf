@@ -30,13 +30,22 @@ typedef struct	s_fields{
 	char		specifier;
 }				t_fields;
 
+typedef struct	s_var
+{
+	int			neg;
+	int			d_len;
+	int			signal;
+	int			space;
+	int			zero;
+}				t_var;
+
 void			ft_putchar(char c, int *p);
 void			ft_putstr(char *s, int *p, int qtt);
 void			ft_putnbr(int n, int *p);
 void			ft_putnbr_u(unsigned int n, int *p);
 void			ft_putnbr_hex(size_t h, int capitalized, int *p);
 void			ft_printspacezero(int type, int qtt, int *p);
-void			ft_printint(va_list *p_ap, int signal, int *p, t_fields *f);
+void			ft_printint(int signal, t_fields *f);
 void			ft_printpercent(int *p, t_fields *f);
 void			ft_printhex(va_list *p_ap, int capitalized,\
 				int *p, t_fields *f);
@@ -45,8 +54,7 @@ void			ft_printstr(va_list *p_ap, int *p, t_fields *f);
 void			ft_printchar(va_list *p_ap, int *p, t_fields *f);
 void			ft_strformat_init(t_fields *f);
 int				ft_getnumber(const char *fmt, int *fmt_inc);
-int				ft_fieldstorage(va_list *p_ap, const char *fmt,\
-				int *fmt_inc, t_fields *f);
+int				ft_fieldstorage(const char *fmt, t_fields *f);
 void			ft_fillflags(const char *fmt, int *fmt_inc, t_fields *f);
 void			ft_fillwidth(va_list *p_ap, const char *fmt,\
 				int *fmt_inc, t_fields *f);

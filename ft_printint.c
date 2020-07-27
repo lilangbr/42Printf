@@ -6,13 +6,13 @@
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/09 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/07/23 23:51:14 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/26 23:39:04 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static void print_mod(int d_len, int signal, long int d, int *p)
+static void	print_mod(int d_len, int signal, long int d, int *p)
 {
 	if (d_len)
 	{
@@ -23,7 +23,7 @@ static void print_mod(int d_len, int signal, long int d, int *p)
 	}
 }
 
-static void aux_precision(t_fields *f, t_var *v, long int d)
+static void	aux_precision(t_fields *f, t_var *v, long int d)
 {
 	if ((v->zero = ft_min(f->precision) - v->d_len) > 0)
 		v->space = f->width - ft_min(f->precision);
@@ -80,10 +80,10 @@ void		ft_printint(int signal, t_fields *f)
 	t_var	*var;
 
 	if (!(var = (t_var*)malloc(sizeof(t_var))))
-		return;
+		return ;
 	var->neg = 0;
 	if (!(var->signal = signal))
-	{ 
+	{
 		d = va_arg(f->ap, unsigned int);
 		var->d_len = ft_len_u(d);
 	}

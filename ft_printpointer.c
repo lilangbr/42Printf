@@ -12,58 +12,86 @@
 
 #include "ft_printf.h"
 
-static int	len_add(size_t add)
+static void	aux_noprecision(t_fields *f, size_t add, int add_len)
 {
-	int length;
+	int space;
 
-	length = 1;
-	while (add > 15)
+	space = f->width - add_len;
+	if (f->flagzero && !f->flagminus)
 	{
-		add = add / 16;
-		length++;
+		ft_printspacezero(0, space, &(f->printed));
+		ft_putstr("0x", &(f->printed), 2);
+		if (ft_len_add(add))
+			ft_putnbr_hex(add, 0, &(f->printed));
 	}
-	return (length);
+	else
+	{
+		if (!f->flagminus)
+			ft_printspacezero(1, space, &(f->printed));
+		ft_putstr("0x", &(f->printed), 2);
+		if (ft_len_add(add))
+			ft_putnbr_hex(add, 0, &(f->printed));
+		if (f->flagminus)
+			ft_printspacezero(1, space, &(f->printed));
+	}
+}
+
+static void aux_precision(t_fields *f, size_t add, int add_len)
+{
+	int zero;
+	int space;
+
+	zero = ft_min(f->precision) - ft_len_add(add);
+	if (zero > 0)
+		space = f->width - f->precision;
+	else
+		space = f->width - add_len;
+	if (!f->flagminus)
+		ft_printspacezero(1, space, &(f->printed));
+	ft_putstr("0x", &(f->printed), 2);
+	if (zero > 0)
+		ft_printspacezero(0, zero, &(f->printed));
+	if (f->precision != 0)
+		ft_putnbr_hex(add, 0, &(f->printed));
+	if (f->flagminus)
+		ft_printspacezero(1, space, &(f->printed));
 }
 
 void		ft_printpointer(t_fields *f)
 {
 	int		add_len;
 	size_t	add;
-	int		space;
-	int		zero;
+	//int		space;
+	//int		zero;
 
 	add = (size_t)va_arg(f->ap, void *);
-	add_len = len_add(add) + 2;
+	add_len = ft_len_add(add) + 2;
 	if (!f->precision && !add && f->point)
 		add_len = 2;
 	if (f->point && (f->precision >= 0))
 	{
+		aux_precision(f, add, add_len);
+		/*
 		zero = ft_min(f->precision) - len_add(add);
 		if (zero > 0)
 			space = f->width - f->precision;
 		else
 			space = f->width - add_len;
 		if (!f->flagminus)
-		{
 			ft_printspacezero(1, space, &(f->printed));
-			ft_putstr("0x", &(f->printed), 2);
-			if (zero > 0)
-				ft_printspacezero(0, zero, &(f->printed));
-			if (f->precision != 0)
-				ft_putnbr_hex(add, 0, &(f->printed));
-		}
-		else
-		{
-			ft_putstr("0x", &(f->printed), 2);
-			if (zero > 0)
-				ft_printspacezero(0, zero, &(f->printed));
-			if (f->precision != 0)
-				ft_putnbr_hex(add, 0, &(f->printed));
+		ft_putstr("0x", &(f->printed), 2);
+		if (zero > 0)
+			ft_printspacezero(0, zero, &(f->printed));
+		if (f->precision != 0)
+			ft_putnbr_hex(add, 0, &(f->printed));
+		if (f->flagminus)
 			ft_printspacezero(1, space, &(f->printed));
-		}
+			*/
 	}
 	else
 	{
+		aux_noprecision(f, add, add_len);
+		/*
 		space = f->width - add_len;
 		zero = space;
 		if (f->flagzero && !f->flagminus)
@@ -75,20 +103,13 @@ void		ft_printpointer(t_fields *f)
 		}
 		else
 		{
+			if (!f->flagminus)
+				ft_printspacezero(1, space, &(f->printed));
+			ft_putstr("0x", &(f->printed), 2);
+			if (len_add(add))
+				ft_putnbr_hex(add, 0, &(f->printed));
 			if (f->flagminus)
-			{
-				ft_putstr("0x", &(f->printed), 2);
-				if (len_add(add))
-					ft_putnbr_hex(add, 0, &(f->printed));
 				ft_printspacezero(1, space, &(f->printed));
-			}
-			else
-			{
-				ft_printspacezero(1, space, &(f->printed));
-				ft_putstr("0x", &(f->printed), 2);
-				if (len_add(add))
-					ft_putnbr_hex(add, 0, &(f->printed));
-			}
-		}
+		}*/
 	}
 }

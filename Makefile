@@ -25,6 +25,7 @@ SRC = ft_fieldstorage.c\
 	  ft_len_u.c\
 	  ft_len_int.c\
 	  ft_printpointer.c\
+	  ft_len_add.c\
 	  ft_printspacezero.c\
 	  ft_printstr.c\
 	  ft_putchar.c\

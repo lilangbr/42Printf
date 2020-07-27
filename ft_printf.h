@@ -52,6 +52,7 @@ int				ft_len_int(int a);
 void			ft_printpercent(t_fields *f);
 void			ft_printhex(int capitalized, t_fields *f);
 void			ft_printpointer(t_fields *f);
+int				ft_len_add(size_t add);
 void			ft_printstr(t_fields *f);
 void			ft_printchar(t_fields *f);
 void			ft_strformat_init(t_fields *f);

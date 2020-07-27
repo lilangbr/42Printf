@@ -12,33 +12,64 @@
 
 #include "ft_printf.h"
 
-static int	len_hex(unsigned int h)
+static void aux_precision(t_fields *f, int h_len, int cap, unsigned int h)
 {
-	int length;
+	int space;
+	int zero;
 
-	length = 1;
-	while (h > 15)
+	zero = f->precision - h_len;
+	if (zero > 0)
+		space = f->width - f->precision;
+	else
+		space = f->width - h_len;
+	if (!(f->flagminus))
+		ft_printspacezero(1, space, &(f->printed));
+	if (zero > 0)
+		ft_printspacezero(0, zero, &(f->printed));
+	if (h_len)
+		ft_putnbr_hex(h, cap, &(f->printed));
+	if (f->flagminus)
+		ft_printspacezero(1, space, &(f->printed));
+}
+
+static void	aux_noprecision(t_fields *f, int h_len, int cap, unsigned int h)
+{
+	int space;
+
+	space = f->width - h_len;
+	if (f->flagzero && !f->flagminus)
 	{
-		h = h / 16;
-		length++;
+		ft_printspacezero(0, space, &(f->printed));
+		if (h_len)
+			ft_putnbr_hex(h, cap, &(f->printed));
 	}
-	return (length);
+	else
+	{
+		if (!f->flagminus)
+			ft_printspacezero(1, space, &(f->printed));
+		if (h_len)
+			ft_putnbr_hex(h, cap, &(f->printed));
+		if (f->flagminus)
+			ft_printspacezero(1, space, &(f->printed));
+	}
 }
 
 void		ft_printhex(int capitalized, t_fields *f)
 {
 	unsigned int	h;
 	int				h_len;
-	int				space;
-	int				zero;
+	//int				space;
+	//int				zero;
 
 	h = va_arg(f->ap, unsigned int);
-	h_len = len_hex(h);
+	h_len = ft_len_hex(h);
 	if (!f->precision && !h && f->point)
 		h_len = 0;
 	if (f->point && (f->precision >= 0))
 	{
-		zero = f->precision - h_len;
+		aux_precision(f, h_len, capitalized, h);
+		/*
+		 * zero = f->precision - h_len;
 		if (zero > 0)
 			space = f->width - f->precision;
 		else
@@ -51,39 +82,29 @@ void		ft_printhex(int capitalized, t_fields *f)
 			if (h_len)
 				ft_putnbr_hex(h, capitalized, &(f->printed));
 		}
-		else
-		{
-			if (zero > 0)
-				ft_printspacezero(0, zero, &(f->printed));
-			if (h_len)
-				ft_putnbr_hex(h, capitalized, &(f->printed));
+		if (f->flagminus)
 			ft_printspacezero(1, space, &(f->printed));
-		}
+			*/
 	}
 	else
 	{
+		aux_noprecision(f, h_len, capitalized, h);
+		/*
 		space = f->width - h_len;
-		zero = space;
 		if (f->flagzero && !f->flagminus)
 		{
-			ft_printspacezero(0, zero, &(f->printed));
+			ft_printspacezero(0, space, &(f->printed));
 			if (h_len)
 				ft_putnbr_hex(h, capitalized, &(f->printed));
 		}
 		else
 		{
+			if (!f->flagminus)
+				ft_printspacezero(1, space, &(f->printed));
+			if (h_len)
+				ft_putnbr_hex(h, capitalized, &(f->printed));
 			if (f->flagminus)
-			{
-				if (h_len)
-					ft_putnbr_hex(h, capitalized, &(f->printed));
 				ft_printspacezero(1, space, &(f->printed));
-			}
-			else
-			{
-				ft_printspacezero(1, space, &(f->printed));
-				if (h_len)
-					ft_putnbr_hex(h, capitalized, &(f->printed));
-			}
-		}
+		}*/
 	}
 }

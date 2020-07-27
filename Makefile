@@ -20,6 +20,7 @@ SRC = ft_fieldstorage.c\
 	  ft_printf.c\
 	  ft_printpercent.c\
 	  ft_printhex.c\
+	  ft_len_hex.c\
 	  ft_printint.c\
 	  ft_min.c\
 	  ft_len_u.c\

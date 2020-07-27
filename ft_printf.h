@@ -6,7 +6,7 @@
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/08 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/07/23 23:21:11 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/26 22:36:21 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void			ft_putnbr_hex(size_t h, int capitalized, int *p);
 void			ft_printspacezero(int type, int qtt, int *p);
 void			ft_printint(int signal, t_fields *f);
 void			ft_printpercent(t_fields *f);
-void			ft_printhex(int capitalized,t_fields *f);
+void			ft_printhex(int capitalized, t_fields *f);
 void			ft_printpointer(t_fields *f);
 void			ft_printstr(t_fields *f);
 void			ft_printchar(t_fields *f);

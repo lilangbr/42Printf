@@ -6,7 +6,7 @@
 /*   By: ebresser <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/09 11:00:03 by ebresser          #+#    #+#             */
-/*   Updated: 2020/07/24 00:19:15 by ebresser         ###   ########.fr       */
+/*   Updated: 2020/07/26 22:32:40 by ebresser         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	strlen(char *s)
 	return (count);
 }
 
-static void aux_precision(int *space, int *qtt, int str_len, t_fields *f)
+static void	aux_precision(int *space, int *qtt, int str_len, t_fields *f)
 {
 	if (f->precision < str_len && f->precision >= 0)
 	{
@@ -36,13 +36,14 @@ static void aux_precision(int *space, int *qtt, int str_len, t_fields *f)
 		*space = f->width - str_len;
 }
 
-static void aux_flagminus(int space, t_fields *f)
+static void	aux_flagminus(int space, t_fields *f)
 {
-		if (f->flagzero)
-			ft_printspacezero(0, space, &(f->printed));
-		else
-			ft_printspacezero(1, space, &(f->printed));
+	if (f->flagzero)
+		ft_printspacezero(0, space, &(f->printed));
+	else
+		ft_printspacezero(1, space, &(f->printed));
 }
+
 void		ft_printstr(t_fields *f)
 {
 	char	*s;

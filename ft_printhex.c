@@ -25,14 +25,14 @@ static int	len_hex(unsigned int h)
 	return (length);
 }
 
-void		ft_printhex(va_list *p_ap, int capitalized, int *p, t_fields *f)
+void		ft_printhex(int capitalized, t_fields *f)
 {
 	unsigned int	h;
 	int				h_len;
 	int				space;
 	int				zero;
 
-	h = va_arg(*p_ap, unsigned int);
+	h = va_arg(f->ap, unsigned int);
 	h_len = len_hex(h);
 	if (!f->precision && !h && f->point)
 		h_len = 0;
@@ -45,19 +45,19 @@ void		ft_printhex(va_list *p_ap, int capitalized, int *p, t_fields *f)
 			space = f->width - h_len;
 		if (!(f->flagminus))
 		{
-			ft_printspacezero(1, space, p);
+			ft_printspacezero(1, space, &(f->printed));
 			if (zero > 0)
-				ft_printspacezero(0, zero, p);
+				ft_printspacezero(0, zero, &(f->printed));
 			if (h_len)
-				ft_putnbr_hex(h, capitalized, p);
+				ft_putnbr_hex(h, capitalized, &(f->printed));
 		}
 		else
 		{
 			if (zero > 0)
-				ft_printspacezero(0, zero, p);
+				ft_printspacezero(0, zero, &(f->printed));
 			if (h_len)
-				ft_putnbr_hex(h, capitalized, p);
-			ft_printspacezero(1, space, p);
+				ft_putnbr_hex(h, capitalized, &(f->printed));
+			ft_printspacezero(1, space, &(f->printed));
 		}
 	}
 	else
@@ -66,23 +66,23 @@ void		ft_printhex(va_list *p_ap, int capitalized, int *p, t_fields *f)
 		zero = space;
 		if (f->flagzero && !f->flagminus)
 		{
-			ft_printspacezero(0, zero, p);
+			ft_printspacezero(0, zero, &(f->printed));
 			if (h_len)
-				ft_putnbr_hex(h, capitalized, p);
+				ft_putnbr_hex(h, capitalized, &(f->printed));
 		}
 		else
 		{
 			if (f->flagminus)
 			{
 				if (h_len)
-					ft_putnbr_hex(h, capitalized, p);
-				ft_printspacezero(1, space, p);
+					ft_putnbr_hex(h, capitalized, &(f->printed));
+				ft_printspacezero(1, space, &(f->printed));
 			}
 			else
 			{
-				ft_printspacezero(1, space, p);
+				ft_printspacezero(1, space, &(f->printed));
 				if (h_len)
-					ft_putnbr_hex(h, capitalized, p);
+					ft_putnbr_hex(h, capitalized, &(f->printed));
 			}
 		}
 	}

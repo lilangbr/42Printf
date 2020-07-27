@@ -36,21 +36,21 @@ static void aux_precision(int *space, int *qtt, int str_len, t_fields *f)
 		*space = f->width - str_len;
 }
 
-static void aux_flagminus(int space, int *p, t_fields *f)
+static void aux_flagminus(int space, t_fields *f)
 {
 		if (f->flagzero)
-			ft_printspacezero(0, space, p);
+			ft_printspacezero(0, space, &(f->printed));
 		else
-			ft_printspacezero(1, space, p);
+			ft_printspacezero(1, space, &(f->printed));
 }
-void		ft_printstr(va_list *p_ap, int *p, t_fields *f)
+void		ft_printstr(t_fields *f)
 {
 	char	*s;
 	int		str_len;
 	int		space;
 	int		qtt;
 
-	s = va_arg(*p_ap, char *);
+	s = va_arg(f->ap, char *);
 	if (!s)
 		s = "(null)";
 	str_len = strlen(s);
@@ -61,12 +61,12 @@ void		ft_printstr(va_list *p_ap, int *p, t_fields *f)
 		space = f->width - str_len;
 	if (!(f->flagminus))
 	{
-		aux_flagminus(space, p, f);
-		ft_putstr(s, p, qtt);
+		aux_flagminus(space, f);
+		ft_putstr(s, &(f->printed), qtt);
 	}
 	else
 	{
-		ft_putstr(s, p, qtt);
-		ft_printspacezero(1, space, p);
+		ft_putstr(s, &(f->printed), qtt);
+		ft_printspacezero(1, space, &(f->printed));
 	}
 }

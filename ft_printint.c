@@ -70,7 +70,7 @@ static void print_mod(int d_len, int signal, long int d, int *p)
 	}
 }
 
-static void aux_precision(t_fields *f, t_var *v, int *p, long int d)
+static void aux_precision(t_fields *f, t_var *v, long int d)
 {
 	if ((v->zero = min(f->precision) - v->d_len) > 0)
 		v->space = f->width - min(f->precision);
@@ -80,23 +80,23 @@ static void aux_precision(t_fields *f, t_var *v, int *p, long int d)
 		v->space--;
 	if (!(f->flagminus))
 	{
-		ft_printspacezero(1, v->space, p);
+		ft_printspacezero(1, v->space, &(f->printed));
 		if (v->neg)
-			ft_putchar('-', p);
-		ft_printspacezero(0, v->zero, p);
-		print_mod(v->d_len, v->signal, d, p);
+			ft_putchar('-', &(f->printed));
+		ft_printspacezero(0, v->zero, &(f->printed));
+		print_mod(v->d_len, v->signal, d, &(f->printed));
 	}
 	else
 	{
 		if (v->neg)
-			ft_putchar('-', p);
-		ft_printspacezero(0, v->zero, p);
-		print_mod(v->d_len, v->signal, d, p);
-		ft_printspacezero(1, v->space, p);
+			ft_putchar('-', &(f->printed));
+		ft_printspacezero(0, v->zero, &(f->printed));
+		print_mod(v->d_len, v->signal, d, &(f->printed));
+		ft_printspacezero(1, v->space, &(f->printed));
 	}
 }
 
-static void	aux_noprecision(t_fields *f, t_var *v, int *p, long int d)
+static void	aux_noprecision(t_fields *f, t_var *v, long int d)
 {
 	if (v->neg)
 		v->d_len++;
@@ -105,25 +105,25 @@ static void	aux_noprecision(t_fields *f, t_var *v, int *p, long int d)
 	if (f->flagzero && !f->flagminus)
 	{
 		if (v->neg)
-			ft_putchar('-', p);
-		ft_printspacezero(0, v->zero, p);
-		print_mod(v->d_len, v->signal, d, p);
+			ft_putchar('-', &(f->printed));
+		ft_printspacezero(0, v->zero, &(f->printed));
+		print_mod(v->d_len, v->signal, d, &(f->printed));
 	}
 	else
 	{
 		if (f->flagminus)
 		{
 			if (v->neg)
-				ft_putchar('-', p);
-			print_mod(v->d_len, v->signal, d, p);
-			ft_printspacezero(1, v->space, p);
+				ft_putchar('-', &(f->printed));
+			print_mod(v->d_len, v->signal, d, &(f->printed));
+			ft_printspacezero(1, v->space, &(f->printed));
 		}
 		else
 		{
-			ft_printspacezero(1, v->space, p);
+			ft_printspacezero(1, v->space, &(f->printed));
 			if (v->neg)
-				ft_putchar('-', p);
-			print_mod(v->d_len, v->signal, d, p);
+				ft_putchar('-', &(f->printed));
+			print_mod(v->d_len, v->signal, d, &(f->printed));
 		}
 	}
 }
@@ -137,7 +137,7 @@ void		ft_printint(int signal, t_fields *f)
 		return;
 	var->neg = 0;
 	if (!(var->signal = signal))
-	{ //if (!signal)
+	{ 
 		d = va_arg(f->ap, unsigned int);
 		var->d_len = len_u(d);
 	}
@@ -150,8 +150,8 @@ void		ft_printint(int signal, t_fields *f)
 	if (!f->precision && !d && f->point)
 		var->d_len = 0;
 	if (f->point && (f->precision >= 0))
-		aux_precision(f, var, &(f->printed), d);
+		aux_precision(f, var, d);
 	else
-		aux_noprecision(f, var, &(f->printed), d);
+		aux_noprecision(f, var, d);
 	free(var);
 }

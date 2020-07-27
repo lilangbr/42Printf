@@ -33,14 +33,14 @@ static int	min(int n)
 		return (n);
 }
 
-void		ft_printpointer(va_list *p_ap, int *p, t_fields *f)
+void		ft_printpointer(t_fields *f)
 {
 	int		add_len;
 	size_t	add;
 	int		space;
 	int		zero;
 
-	add = (size_t)va_arg(*p_ap, void *);
+	add = (size_t)va_arg(f->ap, void *);
 	add_len = len_add(add) + 2;
 	if (!f->precision && !add && f->point)
 		add_len = 2;
@@ -53,21 +53,21 @@ void		ft_printpointer(va_list *p_ap, int *p, t_fields *f)
 			space = f->width - add_len;
 		if (!f->flagminus)
 		{
-			ft_printspacezero(1, space, p);
-			ft_putstr("0x", p, 2);
+			ft_printspacezero(1, space, &(f->printed));
+			ft_putstr("0x", &(f->printed), 2);
 			if (zero > 0)
-				ft_printspacezero(0, zero, p);
+				ft_printspacezero(0, zero, &(f->printed));
 			if (f->precision != 0)
-				ft_putnbr_hex(add, 0, p);
+				ft_putnbr_hex(add, 0, &(f->printed));
 		}
 		else
 		{
-			ft_putstr("0x", p, 2);
+			ft_putstr("0x", &(f->printed), 2);
 			if (zero > 0)
-				ft_printspacezero(0, zero, p);
+				ft_printspacezero(0, zero, &(f->printed));
 			if (f->precision != 0)
-				ft_putnbr_hex(add, 0, p);
-			ft_printspacezero(1, space, p);
+				ft_putnbr_hex(add, 0, &(f->printed));
+			ft_printspacezero(1, space, &(f->printed));
 		}
 	}
 	else
@@ -76,26 +76,26 @@ void		ft_printpointer(va_list *p_ap, int *p, t_fields *f)
 		zero = space;
 		if (f->flagzero && !f->flagminus)
 		{
-			ft_printspacezero(0, space, p);
-			ft_putstr("0x", p, 2);
+			ft_printspacezero(0, space, &(f->printed));
+			ft_putstr("0x", &(f->printed), 2);
 			if (len_add(add))
-				ft_putnbr_hex(add, 0, p);
+				ft_putnbr_hex(add, 0, &(f->printed));
 		}
 		else
 		{
 			if (f->flagminus)
 			{
-				ft_putstr("0x", p, 2);
+				ft_putstr("0x", &(f->printed), 2);
 				if (len_add(add))
-					ft_putnbr_hex(add, 0, p);
-				ft_printspacezero(1, space, p);
+					ft_putnbr_hex(add, 0, &(f->printed));
+				ft_printspacezero(1, space, &(f->printed));
 			}
 			else
 			{
-				ft_printspacezero(1, space, p);
-				ft_putstr("0x", p, 2);
+				ft_printspacezero(1, space, &(f->printed));
+				ft_putstr("0x", &(f->printed), 2);
 				if (len_add(add))
-					ft_putnbr_hex(add, 0, p);
+					ft_putnbr_hex(add, 0, &(f->printed));
 			}
 		}
 	}

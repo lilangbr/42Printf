@@ -12,21 +12,21 @@
 
 #include "ft_printf.h"
 
-void	ft_printchar(va_list *p_ap, int *p, t_fields *f)
+void	ft_printchar(t_fields *f)
 {
 	char	c;
 	int		space;
 
 	space = f->width - 1;
-	c = (char)va_arg(*p_ap, int);
+	c = (char)va_arg(f->ap, int);
 	if (f->flagminus)
 	{
-		ft_putchar(c, p);
-		ft_printspacezero(1, space, p);
+		ft_putchar(c, &(f->printed));
+		ft_printspacezero(1, space, &(f->printed));
 	}
 	else
 	{
-		ft_printspacezero(1, space, p);
-		ft_putchar(c, p);
+		ft_printspacezero(1, space, &(f->printed));
+		ft_putchar(c, &(f->printed));
 	}
 }

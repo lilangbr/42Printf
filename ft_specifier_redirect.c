@@ -12,22 +12,22 @@
 
 #include "ft_printf.h"
 
-void	ft_specifier_redirect(va_list *p_ap, char sp, int *p, t_fields *f)
+void	ft_specifier_redirect(char sp, t_fields *f)
 {
 	if (sp == 'd' || sp == 'i')
 		ft_printint(1, f);
 	else if (sp == 'u')
 		ft_printint(0, f);
 	else if (sp == 'c')
-		ft_printchar(p_ap, p, f);
+		ft_printchar(f);
 	else if (sp == 's')
-		ft_printstr(p_ap, p, f);
+		ft_printstr(f);
 	else if (sp == 'x')
-		ft_printhex(p_ap, 0, p, f);
+		ft_printhex(0, f);
 	else if (sp == 'X')
-		ft_printhex(p_ap, 1, p, f);
+		ft_printhex(1, f);
 	else if (sp == 'p')
-		ft_printpointer(p_ap, p, f);
+		ft_printpointer(f);
 	else if (sp == '%')
-		ft_printpercent(p, f);
+		ft_printpercent(f);
 }

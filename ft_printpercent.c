@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void	ft_printpercent(int *p, t_fields *f)
+void	ft_printpercent(t_fields *f)
 {
 	int space;
 	int zero;
@@ -21,20 +21,20 @@ void	ft_printpercent(int *p, t_fields *f)
 	zero = space;
 	if (f->flagzero && !f->flagminus)
 	{
-		ft_printspacezero(0, zero, p);
-		ft_putchar('%', p);
+		ft_printspacezero(0, zero, &(f->printed));
+		ft_putchar('%', &(f->printed));
 	}
 	else
 	{
 		if (f->flagminus)
 		{
-			ft_putchar('%', p);
-			ft_printspacezero(1, space, p);
+			ft_putchar('%', &(f->printed));
+			ft_printspacezero(1, space, &(f->printed));
 		}
 		else
 		{
-			ft_printspacezero(1, space, p);
-			ft_putchar('%', p);
+			ft_printspacezero(1, space, &(f->printed));
+			ft_putchar('%', &(f->printed));
 		}
 	}
 }

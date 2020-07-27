@@ -12,18 +12,18 @@
 
 #include "ft_printf.h"
 
-static void	aux(int mode, t_fields *f, int *fmt_inc)
+static void	aux(int mode, t_fields *f)
 {
 	if (mode == 1)
 	{
 		f->point = 1;
 		f->width = 0;
-		(*fmt_inc)++;
+		(f->fmt_inc)++;
 	}
 	else if (mode == 2)
 	{
 		f->point = 1;
-		(*fmt_inc)++;
+		(f->fmt_inc)++;
 	}
 	else if (mode == 3)
 	{
@@ -33,27 +33,26 @@ static void	aux(int mode, t_fields *f, int *fmt_inc)
 	}
 }
 
-void		ft_fillwidth(va_list *p_ap, const char *fmt, int *fmt_inc, \
-		t_fields *f)
+void		ft_fillwidth(const char *fmt, t_fields *f)
 {
 	if (*fmt == '.')
-		aux(1, f, fmt_inc);
+		aux(1, f);
 	else
 	{
 		if (*fmt == '*')
 		{
-			f->width = va_arg(*p_ap, int);
+			f->width = va_arg(f->ap, int);
 			fmt++;
-			(*fmt_inc)++;
+			(f->fmt_inc)++;
 		}
 		else
 		{
-			f->width = ft_getnumber(fmt, fmt_inc);
-			fmt = fmt + *fmt_inc;
+			f->width = ft_getnumber(fmt, &(f->fmt_inc));
+			fmt = fmt + f->fmt_inc;
 		}
 		if (*fmt == '.')
-			aux(2, f, fmt_inc);
+			aux(2, f);
 	}
 	if (f->width < 0)
-		aux(3, f, fmt_inc);
+		aux(3, f);
 }

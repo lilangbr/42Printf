@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void	ft_fillflags(const char *fmt, int *fmt_inc, t_fields *f)
+void	ft_fillflags(const char *fmt, t_fields *f)
 {
 	int count_minus;
 	int count_zero;
@@ -32,6 +32,6 @@ void	ft_fillflags(const char *fmt, int *fmt_inc, t_fields *f)
 			count_zero++;
 		}
 		fmt++;
-		(*fmt_inc)++;
+		(f->fmt_inc)++;
 	}
 }

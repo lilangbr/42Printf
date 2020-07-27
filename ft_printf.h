@@ -46,23 +46,19 @@ void			ft_putnbr_u(unsigned int n, int *p);
 void			ft_putnbr_hex(size_t h, int capitalized, int *p);
 void			ft_printspacezero(int type, int qtt, int *p);
 void			ft_printint(int signal, t_fields *f);
-void			ft_printpercent(int *p, t_fields *f);
-void			ft_printhex(va_list *p_ap, int capitalized,\
-				int *p, t_fields *f);
-void			ft_printpointer(va_list *p_ap, int *p, t_fields *f);
-void			ft_printstr(va_list *p_ap, int *p, t_fields *f);
-void			ft_printchar(va_list *p_ap, int *p, t_fields *f);
+void			ft_printpercent(t_fields *f);
+void			ft_printhex(int capitalized,t_fields *f);
+void			ft_printpointer(t_fields *f);
+void			ft_printstr(t_fields *f);
+void			ft_printchar(t_fields *f);
 void			ft_strformat_init(t_fields *f);
 int				ft_getnumber(const char *fmt, int *fmt_inc);
 int				ft_fieldstorage(const char *fmt, t_fields *f);
-void			ft_fillflags(const char *fmt, int *fmt_inc, t_fields *f);
-void			ft_fillwidth(va_list *p_ap, const char *fmt,\
-				int *fmt_inc, t_fields *f);
-int				ft_fillprecision(va_list *p_ap, const char *fmt,\
-				int *fmt_inc, t_fields *f);
-int				ft_fillspecifier(const char *fmt, int *fmt_inc, t_fields *f);
-void			ft_specifier_redirect(va_list *p_ap, char sp,\
-				int *p, t_fields *f);
+void			ft_fillflags(const char *fmt, t_fields *f);
+void			ft_fillwidth(const char *fmt, t_fields *f);
+int				ft_fillprecision(const char *fmt, t_fields *f);
+int				ft_fillspecifier(const char *fmt, t_fields *f);
+void			ft_specifier_redirect(char sp, t_fields *f);
 int				ft_printf(const char *fmt, ...);
 
 #endif

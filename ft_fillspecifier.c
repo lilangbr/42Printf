@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-int		ft_fillspecifier(const char *fmt, int *fmt_inc, t_fields *f)
+int		ft_fillspecifier(const char *fmt, t_fields *f)
 {
 	if (*fmt != 's' && *fmt != 'c' && *fmt != 'i'\
 			&& *fmt != 'u' && *fmt != 'd' && *fmt != 'x'\
@@ -21,7 +21,7 @@ int		ft_fillspecifier(const char *fmt, int *fmt_inc, t_fields *f)
 	else
 	{
 		f->specifier = *fmt;
-		(*fmt_inc)++;
+		(f->fmt_inc)++;
 		return (0);
 	}
 }

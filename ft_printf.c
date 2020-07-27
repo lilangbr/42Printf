@@ -27,7 +27,7 @@ static int	aux2(const char **fmt2, t_fields *f)
 		free(f);
 		return (-1);
 	}
-	ft_specifier_redirect(&(f->ap), f->specifier, &(f->printed), f);
+	ft_specifier_redirect(f->specifier, f);
 	*fmt2 = *fmt2 + f->fmt_inc;
 	return (0);
 }

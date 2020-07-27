@@ -12,8 +12,7 @@
 
 #include "ft_printf.h"
 
-int		ft_fillprecision(va_list *p_ap, const char *fmt,\
-		int *fmt_inc, t_fields *f)
+int		ft_fillprecision(const char *fmt, t_fields *f)
 {
 	if (*fmt == '-')
 		return (-1);
@@ -21,11 +20,11 @@ int		ft_fillprecision(va_list *p_ap, const char *fmt,\
 	{
 		if (*fmt == '*')
 		{
-			f->precision = va_arg(*p_ap, int);
-			(*fmt_inc)++;
+			f->precision = va_arg(f->ap, int);
+			(f->fmt_inc)++;
 		}
 		else
-			f->precision = ft_getnumber(fmt, fmt_inc);
+			f->precision = ft_getnumber(fmt, &(f->fmt_inc));
 		return (0);
 	}
 	else

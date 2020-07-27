@@ -25,14 +25,6 @@ static int	len_add(size_t add)
 	return (length);
 }
 
-static int	min(int n)
-{
-	if (n < 0)
-		return (0);
-	else
-		return (n);
-}
-
 void		ft_printpointer(t_fields *f)
 {
 	int		add_len;
@@ -46,7 +38,7 @@ void		ft_printpointer(t_fields *f)
 		add_len = 2;
 	if (f->point && (f->precision >= 0))
 	{
-		zero = min(f->precision) - len_add(add);
+		zero = ft_min(f->precision) - len_add(add);
 		if (zero > 0)
 			space = f->width - f->precision;
 		else

@@ -3,19 +3,19 @@ Printf function recoded, with limited specifiers and flags. Because putnbr and p
 
 ## Use:
 
-### Build project:<br/>
+🚧 project:<br/>
 ```
 42Libft $ make
 ```
-### Clean Obj files:<br/>
+🚿 Clean Obj files:<br/>
 ```
 42Libft $ make clean
 ```
-### Clean All (obj files + binary):<br/>
+🚿 🚿 Clean All (obj files + binary):<br/>
 ```
 42Libft $ make fclean
 ```
-### Clean All + build:<br/>
+🚿 🚿 🚧 Clean All + build:<br/>
 ```
 42Libft $ make re
 ```

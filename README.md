@@ -1,6 +1,26 @@
 # Printf42
 Printf function recoded, with limited specifiers and flags. Because putnbr and putstr aren’t enough!
 
+## Use:
+
+### Build project:<br/>
+```
+42Libft $ make
+```
+### Clean Obj files:<br/>
+```
+42Libft $ make clean
+```
+### Clean All (obj files + binary):<br/>
+```
+42Libft $ make fclean
+```
+### Clean All + build:<br/>
+```
+42Libft $ make re
+```
+
+<br/>See Makefile<br/>
 <h2><b>Logic</b></h2>
 
 Basically, this printf works on demand. It goes through the string and, at each step, prints the character found. (Like a char machine gun - the char found is printed and counted).

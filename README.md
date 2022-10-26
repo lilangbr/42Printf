@@ -1,7 +1,7 @@
 # Printf42
 
 The ft_printf project proposes to recode the printf() function, , with limited specifiers and flags. </br></br>
-It envolves the entire process of parsing, conversions and correct administration of formatting flags. This project allows only the 'write', 'malloc', 'free' and 'exit' functions to be used, as well as the stdarg.h library, requiring that any other necessary function be written by the cadet himself. </br>It works on concepts, mainly, such as variadic functions.
+It envolves the entire process of parsing, conversions and correct administration of formatting flags. This project allows only the 'write', 'malloc', 'free' and 'exit' functions to be used, as well as the stdarg.h library, requiring that any other necessary function be written by the cadet himself. </br>It works with variadic functions concept.
 
 
 Printf function recoded, with limited specifiers and flags. Because putnbr and putstr aren’t enough!
